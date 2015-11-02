@@ -1,3 +1,7 @@
+2015-11-02  Stanislas Rolland  <typo(arobas)sjbr.ca>
+
+	* Resolves #70917: An end brace is in excess in TS setup.
+
 2015-10-11  Stanislas Rolland  <typo3@sjbr.ca>
 
 	* Cleanup
@@ -7,7 +11,7 @@
 	* Improve template handling
 	* Cleanup references to versions of TYPO3 CMS lower than 6.2
 	* Delete directory mod1
-	* Update verion to 2.3.0
+	* Update version to 2.3.0
 
 2015-03-31  Stanislas Rolland  <typo3@sjbr.ca>
 

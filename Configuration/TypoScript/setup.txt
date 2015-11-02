@@ -36,7 +36,6 @@ plugin.tx_srfreecap {
 			0 = EXT:sr_freecap/Resources/Private/Templates/
 			1 = {$plugin.tx_srfreecap.view.templateRootPath}
 		}
-		}
 		partialRootPaths {
 			0 = EXT:sr_freecap/Resources/Private/Partials/
 			1 = {$plugin.tx_srfreecap.view.partialRootPath}
