@@ -25,6 +25,7 @@ namespace SJBR\SrFreecap\Utility;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use TYPO3\CMS\Core\Error\Http\BadRequestException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\VersionNumberUtility;
 
@@ -126,7 +127,11 @@ class EidUtility {
 		$response = $this->objectManager->get('TYPO3\\CMS\\Extbase\\Mvc\\Web\\Response');
 		/* @var $dispatcher \TYPO3\CMS\Extbase\Mvc\Dispatcher */
 		$dispatcher = $this->objectManager->get('TYPO3\\CMS\\Extbase\\Mvc\\Dispatcher');
-		$dispatcher->dispatch($request, $response);
+		try {
+			$dispatcher->dispatch($request, $response);
+		} catch (\Exception $e) {
+			throw new BadRequestException('An argument is missing or invalid', 1394587024);
+		}
 		if ($GLOBALS ['TSFE']->fe_user) {
 			$GLOBALS ['TSFE']->fe_user->storeSessionData();
 		}
@@ -240,6 +245,8 @@ class EidUtility {
 			} else if (GeneralUtility::_GP('amp;' . $argument)) {
 				// Something went wrong...
 				$this->requestArguments[$argument] = GeneralUtility::_GP('amp;' . $argument);
+			} else if ($argument !== 'arguments') {
+				throw new BadRequestException('An argument is missing', 1394587023);
 			}
 		}
 	}

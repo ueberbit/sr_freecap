@@ -1,6 +1,7 @@
 2015-11-02  Stanislas Rolland  <typo(arobas)sjbr.ca>
 
 	* Resolves #70917: An end brace is in excess in TS setup.
+	* Resolves #66194: 500 error in access log
 
 2015-10-11  Stanislas Rolland  <typo3@sjbr.ca>
 
