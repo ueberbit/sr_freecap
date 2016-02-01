@@ -1,32 +1,38 @@
 <?php
 namespace SJBR\SrFreecap\ViewHelpers;
-/***************************************************************
-*  Copyright notice
-*
-*  (c) 2013-2015 Stanislas Rolland <typo3(arobas)sjbr.ca>
-*  All rights reserved
-*
-*  This script is part of the TYPO3 project. The TYPO3 project is
-*  free software; you can redistribute it and/or modify
-*  it under the terms of the GNU General Public License as published by
-*  the Free Software Foundation; either version 2 of the License, or
-*  (at your option) any later version.
-*
-*  The GNU General Public License can be found at
-*  http://www.gnu.org/copyleft/gpl.html.
-*  A copy is found in the textfile GPL.txt and important notices to the license
-*  from the author is found in LICENSE.txt distributed with these scripts.
-*
-*
-*  This script is distributed in the hope that it will be useful,
-*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*  GNU General Public License for more details.
-*
-*  This copyright notice MUST APPEAR in all copies of the script!
-***************************************************************/
-class ImageViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
 
+/***************************************************************
+ *  Copyright notice
+ *
+ *  (c) 2013-2016 Stanislas Rolland <typo3(arobas)sjbr.ca>
+ *  All rights reserved
+ *
+ *  This script is part of the TYPO3 project. The TYPO3 project is
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  The GNU General Public License can be found at
+ *  http://www.gnu.org/copyleft/gpl.html.
+ *  A copy is found in the textfile GPL.txt and important notices to the license
+ *  from the author is found in LICENSE.txt distributed with these scripts.
+ *
+ *
+ *  This script is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  This copyright notice MUST APPEAR in all copies of the script!
+ ***************************************************************/
+
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
+use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
+
+class ImageViewHelper extends AbstractViewHelper
+{
 	/**
 	 * @var string Name of the extension this view helper belongs to
 	 */
@@ -43,15 +49,16 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelpe
 	protected $pluginName = 'tx_srfreecap';
 
 	/**
-	 * @var \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface
+	 * @var ConfigurationManagerInterface
 	 */
 	protected $configurationManager;
 
 	/**
-	 * @param \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface $configurationManager
+	 * @param ConfigurationManagerInterface $configurationManager
 	 * @return void
 	 */
-	public function injectConfigurationManager(\TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface $configurationManager) {
+	public function injectConfigurationManager(ConfigurationManagerInterface $configurationManager)
+	{
 		$this->configurationManager = $configurationManager;
 	}
 
@@ -61,27 +68,27 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelpe
 	 * @param string suffix to be appended to the extenstion key when forming css class names
 	 * @return string The html used to render the captcha image
 	 */
-	public function render ($suffix = '') {
-
+	public function render($suffix = '')
+	{
 		$value = '';
 
 		// Include the required JavaScript
-		$GLOBALS['TSFE']->additionalHeaderData[$this->extensionKey] .= '<script type="text/javascript" src="'. \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::siteRelPath($this->extensionKey) . 'Resources/Public/JavaScript/freeCap.js"></script>';
+		$GLOBALS['TSFE']->additionalHeaderData[$this->extensionKey . '_freeCap'] = '<script type="text/javascript" src="' . GeneralUtility::createVersionNumberedFilename(ExtensionManagementUtility::siteRelPath($this->extensionKey) . 'Resources/Public/JavaScript/freeCap.js') . '"></script>';
 
 		// Disable caching
 		$GLOBALS['TSFE']->no_cache = 1;
 
 		// Get the plugin configuration
-		$settings = $this->configurationManager->getConfiguration(\TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface::CONFIGURATION_TYPE_SETTINGS, $this->extensionName);
+		$settings = $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_SETTINGS, $this->extensionName);
 
 		// Get the translation view helper
-		$objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
+		$objectManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
 		$translator = $objectManager->get('SJBR\\SrFreecap\\ViewHelpers\\TranslateViewHelper');
 		$translator->injectConfigurationManager($this->configurationManager);
 
 		// Generate the image url
-		$fakeId = \TYPO3\CMS\Core\Utility\GeneralUtility::shortMD5(uniqid (rand()),5);
-		$siteURL = \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('TYPO3_SITE_URL');
+		$fakeId = GeneralUtility::shortMD5(uniqid (rand()),5);
+		$siteURL = GeneralUtility::getIndpEnv('TYPO3_SITE_URL');
 		$urlParams = array(
 			'eID' => 'sr_freecap_EidDispatcher',
 			'id' => $GLOBALS['TSFE']->id,
@@ -99,7 +106,7 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelpe
 		if ($GLOBALS['TSFE']->MP) {
 			$urlParams['MP'] = $GLOBALS['TSFE']->MP;
 		}
-		$imageUrl = $siteURL . 'index.php?' . ltrim(\TYPO3\CMS\Core\Utility\GeneralUtility::implodeArrayForUrl('', $urlParams), '&');
+		$imageUrl = $siteURL . 'index.php?' . ltrim(GeneralUtility::implodeArrayForUrl('', $urlParams), '&');
 
 		// Generate the html text
 		$value = '<img' . $this->getClassAttribute('image', $suffix) . ' id="tx_srfreecap_captcha_image_' . $fakeId . '"'
@@ -119,8 +126,8 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelpe
 	 * @param string suffix to be appended to the extenstion key when forming css class names
 	 * @return string the class attribute with the combined class name (with the correct prefix)
 	 */
-	protected function getClassAttribute ($class, $suffix = '') {
+	protected function getClassAttribute($class, $suffix = '')
+	{
 		return ' class="' . trim(str_replace('_', '-', $this->pluginName) . ($suffix ? '-' . $suffix . '-' : '-') . $class) . '"';
 	}
 }
-?>

@@ -1,3 +1,6 @@
+2016-02-01  Stanislas Rolland  <typo(arobas)sjbr.ca>
+	* Cleanup in ImageViewHelper
+
 2015-11-02  Stanislas Rolland  <typo(arobas)sjbr.ca>
 
 	* Resolves #70917: An end brace is in excess in TS setup.
