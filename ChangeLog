@@ -1,6 +1,7 @@
 2016-02-01  Stanislas Rolland  <typo(arobas)sjbr.ca>
 	* Cleanup in ImageViewHelper
 	* Correction to composer.json
+	* Resolves #73075: Word list used when renewing captcha image is in wrong language
 
 2015-11-02  Stanislas Rolland  <typo(arobas)sjbr.ca>
 

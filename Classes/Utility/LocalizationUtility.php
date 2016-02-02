@@ -1,10 +1,11 @@
 <?php
 namespace SJBR\SrFreecap\Utility;
+
 /***************************************************************
  *  Copyright notice
  *
  *  (c) 2009 Sebastian Kurfürst <sebastian@typo3.org>
- *  (c) 2013 Stanislas Rolland <typo3@sjbr.ca>
+ *  (c) 2013-2016 Stanislas Rolland <typo3@sjbr.ca>
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -23,6 +24,11 @@ namespace SJBR\SrFreecap\Utility;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
+use TYPO3\CMS\Core\Localization\Locales;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /**
  * Localization helper which should be used to fetch appropriate words list or voice rendering language
  *
@@ -56,13 +62,14 @@ class LocalizationUtility {
 	 * @param string $defaultWordsList: location of the default words list
 	 * @return string the location of the words list to be used
 	 */
-	public static function getWordsListLocation($defaultWordsList = '') {
+	public static function getWordsListLocation($defaultWordsList = '')
+	{
 		self::setLanguageKeys();
 		$initialWordsList = $defaultWordsList;
 		if (!trim($initialWordsList)) {
 			$initialWordsList = 'EXT:' . self::$extensionKey . '/Resources/Private/Captcha/Words/default_freecap_words';
 		}
-		$path = dirname(\TYPO3\CMS\Core\Utility\GeneralUtility::getFileAbsFileName($initialWordsList)) . '/';
+		$path = dirname(GeneralUtility::getFileAbsFileName($initialWordsList)) . '/';
 		$wordsListLocation = $path . self::$languageKey . '_freecap_words';
 		if (!is_file($wordsListLocation)) {
 			foreach (self::$alternativeLanguageKeys as $language) {
@@ -77,7 +84,6 @@ class LocalizationUtility {
 			if (!is_file($wordsListLocation)) {
 				$wordsListLocation = '';
 			}
-			
 		}
 		return $wordsListLocation;
 	}
@@ -87,9 +93,10 @@ class LocalizationUtility {
 	 *
 	 * @return string name of the directory containing the wav files to be used
 	 */
-	public static function getVoicesDirectory() {
+	public static function getVoicesDirectory()
+	{
 		self::setLanguageKeys();
-		$path = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath(self::$extensionKey) . 'Resources/Private/Captcha/Voices/';
+		$path = ExtensionManagementUtility::extPath(self::$extensionKey) . 'Resources/Private/Captcha/Voices/';
 		$voicesDirectory = $path . self::$languageKey . '/';
 		if (!is_dir($voicesDirectory)) {
 			foreach (self::$alternativeLanguageKeys as $language) {
@@ -111,7 +118,8 @@ class LocalizationUtility {
 	 *
 	 * @return void
 	 */
-	protected static function setLanguageKeys() {
+	protected static function setLanguageKeys()
+	{
 		self::$languageKey = 'default';
 		self::$alternativeLanguageKeys = array();
 		if (TYPO3_MODE === 'FE') {
@@ -120,8 +128,8 @@ class LocalizationUtility {
 				if (isset($GLOBALS['TSFE']->config['config']['language_alt'])) {
 					self::$alternativeLanguageKeys[] = $GLOBALS['TSFE']->config['config']['language_alt'];
 				} else {
-					/** @var $locales \TYPO3\CMS\Core\Localization\Locales */
-					$locales = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Localization\\Locales');
+					/** @var $locales Locales */
+					$locales = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Localization\\Locales');
 					if (in_array(self::$languageKey, $locales->getLocales())) {
 						foreach ($locales->getLocaleDependencies(self::$languageKey) as $language) {
 							self::$alternativeLanguageKeys[] = $language;
@@ -129,11 +137,11 @@ class LocalizationUtility {
 					}
 				}
 			}
-		} elseif (strlen($GLOBALS['BE_USER']->uc['lang']) > 0) {
+		} else if (strlen($GLOBALS['BE_USER']->uc['lang']) > 0) {
 			self::$languageKey = $GLOBALS['BE_USER']->uc['lang'];
 			// Get standard locale dependencies for the backend
-			/** @var $locales \TYPO3\CMS\Core\Localization\Locales */
-			$locales = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Localization\\Locales');
+			/** @var $locales Locales */
+			$locales = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Localization\\Locales');
 			if (in_array(self::$languageKey, $locales->getLocales())) {
 				foreach ($locales->getLocaleDependencies(self::$languageKey) as $language) {
 					self::$alternativeLanguageKeys[] = $language;
@@ -142,4 +150,3 @@ class LocalizationUtility {
 		}
 	}
 }
-?>

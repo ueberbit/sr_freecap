@@ -89,6 +89,7 @@ class ImageViewHelper extends AbstractViewHelper
 		// Generate the image url
 		$fakeId = GeneralUtility::shortMD5(uniqid (rand()),5);
 		$siteURL = GeneralUtility::getIndpEnv('TYPO3_SITE_URL');
+		$L = GeneralUtility::_GP('L');
 		$urlParams = array(
 			'eID' => 'sr_freecap_EidDispatcher',
 			'id' => $GLOBALS['TSFE']->id,
@@ -98,14 +99,12 @@ class ImageViewHelper extends AbstractViewHelper
 			'controllerName' => 'ImageGenerator',
 			'actionName' => 'show',
 			'formatName' => 'png',
-			'set' => $fakeId
+			'L' => $GLOBALS['TSFE']->sys_language_uid
 		);
-		if (isset($L)) {
-			$urlParams['L'] = htmlspecialchars($L);
-		}
 		if ($GLOBALS['TSFE']->MP) {
 			$urlParams['MP'] = $GLOBALS['TSFE']->MP;
 		}
+		$urlParams['set'] = $fakeId;
 		$imageUrl = $siteURL . 'index.php?' . ltrim(GeneralUtility::implodeArrayForUrl('', $urlParams), '&');
 
 		// Generate the html text
