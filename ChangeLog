@@ -1,3 +1,7 @@
+2016-02-11  Stanislas Rolland  <typo(arobas)sjbr.ca>
+
+	* Resolves #73394: Replace the English word list
+
 2016-02-10  Stanislas Rolland  <typo(arobas)sjbr.ca>
 
 	* Resolves #73220: PHP 5.5 warning when decrypting word with blowfish algorithm
