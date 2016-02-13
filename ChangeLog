@@ -1,6 +1,7 @@
 2016-02-13  Stanislas Rolland  <typo(arobas)sjbr.ca>
 
 	* Resolves #73422: Cleanup in German word list
+	* Resolves #73423: Incorrect audio rendering when using word lists with non-ASCII characters	
 
 2016-02-11  Stanislas Rolland  <typo(arobas)sjbr.ca>
 
