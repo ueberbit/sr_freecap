@@ -41,13 +41,12 @@ class EncryptionUtility
 	{
 		if (in_array('mcrypt', get_loaded_extensions())) {
 			$encryptionAlgorithm = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['sr_freecap']['encryptionAlgorithm'];
-			$module = mcrypt_module_open($encryptionAlgorithm, '', MCRYPT_MODE_CBC, '');
-			if ($module !== false) {
-				$key = md5($GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey']);
-				$iv = mcrypt_create_iv(mcrypt_enc_get_iv_size($module), MCRYPT_RAND);
+			$availableAlgorithms = mcrypt_list_algorithms();
+			if (in_array($encryptionAlgorithm, $availableAlgorithms)) {
+				$key = md5($GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey'], true);
+				$iv = mcrypt_create_iv(mcrypt_get_iv_size($encryptionAlgorithm, MCRYPT_MODE_CBC), MCRYPT_RAND);
 				$string = mcrypt_encrypt($encryptionAlgorithm, $key, $string, MCRYPT_MODE_CBC, $iv);
-				$cypher = array(base64_encode($string), $iv);
-				mcrypt_module_close($module);
+				$cypher = array(base64_encode($string), base64_encode($iv));
 			} else {
 				$cypher = array(base64_encode($string));
 			}
@@ -66,8 +65,8 @@ class EncryptionUtility
 	public static function decrypt($cypher)
 	{
 		if (in_array('mcrypt', get_loaded_extensions())) {
-			$key = md5($GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey']);
-			$string = trim(mcrypt_decrypt($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['sr_freecap']['encryptionAlgorithm'], $key, base64_decode($cypher[0]), MCRYPT_MODE_CBC, $cypher[1]));
+			$key = md5($GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey'], true);
+			$string = trim(mcrypt_decrypt($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['sr_freecap']['encryptionAlgorithm'], $key, base64_decode($cypher[0]), MCRYPT_MODE_CBC, base64_decode($cypher[1])));
 		} else {
 			$string = base64_decode($cypher[0]);
 		}
