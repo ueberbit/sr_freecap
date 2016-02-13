@@ -3,6 +3,7 @@
 	* Resolves #73422: Cleanup in German word list
 	* Resolves #73423: Incorrect audio rendering when using word lists with non-ASCII characters
 	* Resolves #73220: Follow-up to PHP 5.5 warning when decrypting word with blowfish algorithm
+	* Update version to 2.3.1
 
 2016-02-11  Stanislas Rolland  <typo(arobas)sjbr.ca>
 
