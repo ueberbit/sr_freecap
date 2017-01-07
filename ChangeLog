@@ -1,6 +1,7 @@
 2017-01-07  Stanislas Rolland  <typo(arobas)sjbr.ca>
 
 	* Change composer name to sjbr/sr-freecap
+	* Require TYPO3 CMS 7.6 LTS
 
 2016-02-13  Stanislas Rolland  <typo(arobas)sjbr.ca>
 
