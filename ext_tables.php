@@ -12,7 +12,7 @@ if (TYPO3_MODE == 'BE' && !(TYPO3_REQUESTTYPE & TYPO3_REQUESTTYPE_INSTALL)) {
 		// See http://php.net/manual/en/configuration.changes.modes.php
 		if (ini_get('zend.multibyte')) {
 			\TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
-				'SJBR.' . $_EXTKEY,
+				'SJBR.sr_freecap',
 				// Make module a submodule of 'tools'
 				'tools',
 				// Submodule key
@@ -20,14 +20,14 @@ if (TYPO3_MODE == 'BE' && !(TYPO3_REQUESTTYPE & TYPO3_REQUESTTYPE_INSTALL)) {
 				// Position
 				'',
 				// An array holding the controller-action combinations that are accessible
-				array(
+				[
 					'FontMaker' => 'new,create'
-				),
-				array(
+				],
+				[
 					'access' => 'user,group',
-					'icon' => 'EXT:' . $_EXTKEY . '/Resources/Public/Images/moduleicon.gif',
-					'labels' => 'LLL:EXT:' . $_EXTKEY . '/Resources/Private/Language/locallang_mod.xlf'
-				)
+					'icon' => 'EXT:sr_freecap/Resources/Public/Images/moduleicon.gif',
+					'labels' => 'LLL:EXT:sr_freecap/Resources/Private/Language/locallang_mod.xlf'
+				]
 			);
 		}
 	}
