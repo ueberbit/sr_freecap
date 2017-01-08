@@ -4,7 +4,8 @@
 	* Require TYPO3 CMS 7.6 LTS
 	* Resolves #79195: Require zend.multibyte for backend module
 	* Resolves #76062: add freeCap.js via includeJSlibs for compression
-	* Update version to 2.4.0	
+	* Update version to 2.4.0
+	* Update manual
 
 2016-02-13  Stanislas Rolland  <typo(arobas)sjbr.ca>
 
