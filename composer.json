@@ -16,7 +16,7 @@
   },
   "replace": {
     "sr_freecap": "self.version",
-    "sjbr/sr_freecap": "self.version",
+    "sjbr/sr-freecap": "self.version",
 	"typo3-ter/sr-freecap": "self.version"
   },
   "require": {
