@@ -27,6 +27,7 @@ namespace SJBR\SrFreecap\ViewHelpers;
  ***************************************************************/
 
 use SJBR\SrFreecap\ViewHelpers\TranslateViewHelper;
+use TYPO3\CMS\Core\Session\Backend\Exception\SessionNotFoundException;
 use TYPO3\CMS\Core\Utility\ClientUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
@@ -53,7 +54,8 @@ class AudioViewHelper extends AbstractTagBasedViewHelper
 	 * @param ConfigurationManagerInterface $configurationManager
 	 * @return void
 	 */
-	public function injectConfigurationManager(ConfigurationManagerInterface $configurationManager) {
+	public function injectConfigurationManager(ConfigurationManagerInterface $configurationManager)
+	{
 		$this->configurationManager = $configurationManager;
 	}
 
@@ -63,7 +65,13 @@ class AudioViewHelper extends AbstractTagBasedViewHelper
 	 * @param string suffix to be appended to the extenstion key when forming css class names
 	 * @return string The html used to render the captcha audio rendering request icon
 	 */
-	public function render ($suffix = '') {
+	public function render($suffix = '')
+	{
+		// This viewhelper needs a frontend user session
+		if (!is_object($GLOBALS ['TSFE']) || !isset($GLOBALS ['TSFE']->fe_user)) {
+			throw new SessionNotFoundException('No frontend user found in session!');
+		}
+
 		$value = '';
 		// Get the plugin configuration
 		$settings = $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_SETTINGS, $this->extensionName, $this->pluginName);
@@ -140,7 +148,8 @@ class AudioViewHelper extends AbstractTagBasedViewHelper
 	 * @param string suffix to be appended to the extenstion key when forming css class names
 	 * @return string the class attribute with the combined class name (with the correct prefix)
 	 */
-	protected function getClassAttribute ($class, $suffix = '') {
+	protected function getClassAttribute ($class, $suffix = '')
+	{
 		return ' class="' . trim(str_replace('_', '-', $this->pluginName) . ($suffix ? '-' . $suffix . '-' : '-') . $class) . '"';
 	}
 }
