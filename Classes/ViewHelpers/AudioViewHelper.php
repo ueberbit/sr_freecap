@@ -79,10 +79,10 @@ class AudioViewHelper extends AbstractTagBasedViewHelper
 		$translator = GeneralUtility::makeInstance(TranslateViewHelper::class);
 		$translator->injectConfigurationManager($this->configurationManager);
 		// Get browser info: in IE 8, we will use a simple link, as dynamic insertion of object element gives unpredictable results
-                $browserInfo = ClientUtility::getBrowserInfo(GeneralUtility::getIndpEnv('HTTP_USER_AGENT'));
-                $browerIsIE8 = $browserInfo['browser'] == 'msie' && $browserInfo['version'] == '8';
+        $browserInfo = ClientUtility::getBrowserInfo(GeneralUtility::getIndpEnv('HTTP_USER_AGENT'));
+        $browerIsIE8 = $browserInfo['browser'] == 'msie' && $browserInfo['version'] == '8';
 		// Generate the icon
-		if ($settings['accessibleOutput'] && in_array('mcrypt', get_loaded_extensions()) && intval($GLOBALS['TYPO3_CONF_VARS']['SYS']['UTF8filesystem'])) {
+		if ($settings['accessibleOutput'] && (int)$GLOBALS['TYPO3_CONF_VARS']['SYS']['UTF8filesystem']) {
 			$fakeId = GeneralUtility::shortMD5(uniqid (rand()),5);
 			$siteURL = GeneralUtility::getIndpEnv('TYPO3_SITE_URL');
 			$urlParams = array(
@@ -95,7 +95,7 @@ class AudioViewHelper extends AbstractTagBasedViewHelper
 				'actionName' => 'play',
 				'formatName' => $browerIsIE8 ? 'mp3' : 'wav',
 			);
-			$L = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('L');
+			$L = GeneralUtility::_GP('L');
 			if (isset($L)) {
 				$urlParams['L'] = htmlspecialchars($L);
 			}
