@@ -1,3 +1,6 @@
+2018-04-01  Stanislas Rolland  <typo(arobas)sjbr.ca>
+	* Resolves #83808: Allow translation of invalid input error (Thanks to Christian Toffolo)
+
 2017-12-20  Stanislas Rolland  <typo(arobas)sjbr.ca>
 	* Update manual
 

@@ -4,10 +4,8 @@ namespace SJBR\SrFreecap\Validation\Validator;
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2012-2017 Stanislas Rolland <typo3@sjbr.ca>
+ *  (c) 2012-2018 Stanislas Rolland <typo3@sjbr.ca>
  *  All rights reserved
- *
- *  All credits go to the v5 team.
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
  *  free software; you can redistribute it and/or modify
@@ -39,8 +37,8 @@ class CaptchaValidator extends AbstractValidator
 	/**
 	 * Specifies whether this validator accepts empty values.
 	 *
-	 * If this is TRUE, the validators isValid() method is not called in case of an empty value
-	 * Note: A value is considered empty if it is NULL or an empty string!
+	 * If this is true, the validators isValid() method is not called in case of an empty value
+	 * Note: A value is considered empty if it is null or an empty string!
 	 * By default all validators except for NotEmpty and the Composite Validators accept empty values
 	 *
 	 * @var bool
@@ -54,10 +52,10 @@ class CaptchaValidator extends AbstractValidator
 
 	/**
 	 * Check the word that was entered against the hashed value
-	 * Returns TRUE, if the given property ($word) matches the session captcha value.
+	 * Returns true, if the given property ($word) matches the session captcha value.
 	 *
 	 * @param string $word: the word that was entered and should be validated
-	 * @return boolean TRUE, if the word entered matches the hash value, FALSE if an error occured
+	 * @return boolean true, if the word entered matches the hash value, false if an error occured
 	 */
 	public function isValid($word)
 	{
@@ -87,7 +85,14 @@ class CaptchaValidator extends AbstractValidator
 			$isValid = empty($word);
 		}
 		if (!$isValid) {
-			$this->addError('Entered word does not match the image', 9221561048);
+			// Please enter the word or number as it appears in the image. The entered value was incorrect.
+			$this->addError(
+				$this->translateErrorMessage(
+					'9221561048',
+					'sr_freecap'
+				),
+				9221561048
+			);
 		}
 		return $isValid;
 	}
