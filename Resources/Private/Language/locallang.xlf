@@ -141,6 +141,12 @@
 			<trans-unit id="9221561048_informal" xml:space="preserve">
 				<source>Please enter the word or number as it appears in the image. The entered value was incorrect.</source>
 			</trans-unit>
+			<trans-unit id="1221560718" xml:space="preserve">
+				<source>Please enter the path to the source TTF font file relative to TYPO3 site.</source>
+			</trans-unit>
+			<trans-unit id="1221560718_informal" xml:space="preserve">
+				<source>Please enter the path to the source TTF font file relative to TYPO3 site.</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

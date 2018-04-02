@@ -4,7 +4,7 @@ namespace SJBR\SrFreecap\Utility;
 /*
  *  Copyright notice
  *
- *  (c) 2012-2015 Stanislas Rolland <typo3(arobas)sjbr.ca>
+ *  (c) 2012-2018 Stanislas Rolland <typo3(arobas)sjbr.ca>
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -27,15 +27,15 @@ namespace SJBR\SrFreecap\Utility;
  *  This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use \TYPO3\CMS\Core\Utility\GeneralUtility;
-use \TYPO3\CMS\Core\Utility\VersionNumberUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\VersionNumberUtility;
+use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 /**
  * Utility for making GD fonts
  */
 class FontMakingUtility
 {
-
 	/**
 	 * Returns an image displaying a list of characters with specified font file and character size
 	 *
@@ -47,7 +47,6 @@ class FontMakingUtility
 	 */
 	public static function makeFontImage($characters, $font, $width = 34, $height = 50)
 	{
-		
 		$size = intval($height * .8);
 		$vertOffset = intval($height * .7);
 		$color = '#000000';
@@ -80,14 +79,14 @@ class FontMakingUtility
 			$gifObjArray[$ic . '0.']['maxWidth'] = $width;
 			$gifObjArray[$ic . '0.']['offset'] = (($ic-1) * $width + $hOffset) . ',' . $vertOffset;
 		}
-		$objectManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
-		$gifCreator = $objectManager->get('SJBR\\SrFreecap\\Utility\\GifBuilderUtility');
+		$objectManager = GeneralUtility::makeInstance(ObjectManager::class);
+		$gifCreator = $objectManager->get(GifBuilderUtility::class);
 		$gifCreator->init();
 		if ($GLOBALS['TYPO3_CONF_VARS']['GFX']['gdlib']) {
 			$gifCreator->start($gifObjArray, array());
 			return $gifCreator->gifBuild();
 		} else {
-			return FALSE;
+			return false;
 		}
 	}
 

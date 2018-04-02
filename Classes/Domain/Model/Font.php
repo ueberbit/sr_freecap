@@ -1,10 +1,11 @@
 <?php
 declare(encoding='ISO-8859-2');
 namespace SJBR\SrFreecap\Domain\Model;
+
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2012-2015 Stanislas Rolland <typo3@sjbr.ca>
+ *  (c) 2012-2018 Stanislas Rolland <typo3@sjbr.ca>
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -27,16 +28,18 @@ namespace SJBR\SrFreecap\Domain\Model;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use \SJBR\SrFreecap\Utility\FontMakingUtility;
+use SJBR\SrFreecap\Utility\FontMakingUtility;
+use SJBR\SrFreecap\Validation\Validator\TtfFileValidator;
+use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 
 /**
  * Font object
  *
  * This file must be iso-8859-2-encoded!
  *
- * @author Stanislas Rolland <typo3@sjbr.ca>
  */
-class Font extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
+class Font extends AbstractEntity
+{
 	/**
 	 * @var int
 	 */
@@ -44,13 +47,13 @@ class Font extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 
 	/**
 	 * @var int
-	 * *@validate NumberRange(minimum=5, maximum=255)*
+	 * @validate NumberRange(minimum=5, maximum=255)
 	 */
 	protected $characterWidth;
 
 	/**
 	 * @var int
-	 * *@validate NumberRange(minimum=5, maximum=255)*
+	 * @validate NumberRange(minimum=5, maximum=255)
 	 */
 	protected $characterHeight;
 
@@ -61,8 +64,9 @@ class Font extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 
 	/**
 	 * @var string
-	 * *@validate StringLength(minimum=1, maximum=255)*
-	 * *@validate SJBR\SrFreecap\Validation\Validator\TtfFileValidator*
+	 * @validate NotEmpty
+	 * @validate StringLength(minimum=1, maximum=255)
+	 * @validate \SJBR\SrFreecap\Validation\Validator\TtfFileValidator
 	 **/
 	protected $ttfFontFileName = '';
 
@@ -184,7 +188,8 @@ class Font extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 	/**
 	 * Creates teh GD font file
 	 */
-	public function createGdFontFile() {
+	public function createGdFontFile()
+	{
 		switch ($this->charactersIncludedInFont) {
 			case 1:
 				$characters = 'a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z';
@@ -217,10 +222,9 @@ class Font extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 		} else {
 			$image = @ImageCreateFromGIF(PATH_site . $this->pngImageFileName);
 		}
-		if ($image !== FALSE) {
+		if ($image !== false) {
 			$this->setGdFontdata(FontMakingUtility::makeFont($image, $numberOfCharacters, $startCharacter, $this->characterWidth, $this->characterHeight, $this->endianness));
 			ImageDestroy($image);
 		}
 	}
 }
-?>

@@ -4,7 +4,7 @@ namespace SJBR\SrFreecap\Controller;
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2012-2015 Stanislas Rolland <typo3@sjbr.ca>
+ *  (c) 2012-2018 Stanislas Rolland <typo3@sjbr.ca>
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -26,13 +26,16 @@ namespace SJBR\SrFreecap\Controller;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
+use SJBR\SrFreecap\Domain\Model\Font;
+use SJBR\SrFreecap\Domain\Repository\FontRepository;
+use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
+
 /**
  * Font Maker controller
- *
- * @author Stanislas Rolland <typo3@sjbr.ca>
  */
-class FontMakerController  extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController {
-
+class FontMakerController  extends ActionController
+{
 	/**
 	 * @var string Name of the extension this controller belongs to
 	 */
@@ -41,12 +44,13 @@ class FontMakerController  extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionContr
 	/**
 	 * Display the font maker form
 	 *
-	 * @param \SJBR\SrFreecap\Domain\Model\Font $font
+	 * @param Font $font
 	 * @return string An HTML form for creating a new font
 	 */
-	public function newAction(\SJBR\SrFreecap\Domain\Model\Font $font = NULL) {
+	public function newAction(Font $font = null)
+	{
 		if (!is_object($font)) {
-			$font = $this->objectManager->get('SJBR\\SrFreecap\\Domain\\Model\\Font');
+			$font = $this->objectManager->get(Font::class);
 		}
 		$this->view->assign('font', $font);
 	}	
@@ -54,14 +58,15 @@ class FontMakerController  extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionContr
 	/**
 	 * Create the font file and display the result
 	 *
-	 * @param \SJBR\SrFreecap\Domain\Model\Font $font
+	 * @param Font $font
 	 * @return string HTML presenting the new font that was created
 	 */
-	public function createAction(\SJBR\SrFreecap\Domain\Model\Font $font) {
+	public function createAction(Font $font)
+	{
 		// Create the font data
 		$font->createGdFontFile();
 		// Store the GD font file
-		$fontRepository = $this->objectManager->get('SJBR\\SrFreecap\\Domain\\Repository\\FontRepository');
+		$fontRepository = $this->objectManager->get(FontRepository::class);
 		$fontRepository->writeFontFile($font);
 		$this->view->assign('font', $font);
 	}
