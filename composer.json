@@ -1,12 +1,14 @@
 {
   "name": "sjbr/sr-freecap",
   "description": "A TYPO3 integration of freeCap CAPTCHA.",
-  "version": "2.4.1",
+  "version": "2.4.2",
   "type": "typo3-cms-extension",
   "license": "GPL-2.0+",
+  "keywords": "captcha",
   "authors": [
     {
       "name": "Stanislas Rolland",
+      "homepage": "http://www.sjbr.ca",
       "role": "Developer"
     }
   ],
