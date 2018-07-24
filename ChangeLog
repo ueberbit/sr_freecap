@@ -2,6 +2,7 @@
 	* Resolves #85628: Error in Spanish localization file
 	* Resolves #85629: Remove dependency on TYPO3 ClientUtility
 	* Resolves #85499: Follow-up to migration from mcrypt to OpenSSL (Thanks to Marcus Bitzl)
+	* Update version to 2.4.3
 
 2018-04-02  Stanislas Rolland  <typo(arobas)sjbr.ca>
 	* Resolves #84576: Adapt font maker backend module to TYPO3 CMS 7 & 8
