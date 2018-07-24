@@ -4,7 +4,7 @@ namespace SJBR\SrFreecap\Configuration;
 /*
  *  Copyright notice
  *
- *  (c) 2013-2017 Stanislas Rolland <typo3(arobas)sjbr.ca>
+ *  (c) 2013-2018 Stanislas Rolland <typo3(arobas)sjbr.ca>
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -44,7 +44,7 @@ class ConfigurationHelper
 	public function buildEncryptionAlgorithmSelector (array $params, TypoScriptConstantsViewHelper $pObj)
 	{
 		if (in_array('openssl', get_loaded_extensions())) {
-			$encryptionAlgorithms = openssl_get_cipher_methods();
+			$encryptionAlgorithms = openssl_get_cipher_methods(true);
 			if (!empty($encryptionAlgorithms)) {
 				$field = '<br /><select id="' . $params['propertyName'] . '" name="' . $params['fieldName'] . '" />' . LF;
 				foreach ($encryptionAlgorithms as $encryptionAlgorithm) {
