@@ -4,7 +4,7 @@ namespace SJBR\SrFreecap\ViewHelpers;
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2013-2017 Stanislas Rolland <typo3(arobas)sjbr.ca>
+ *  (c) 2013-2018 Stanislas Rolland <typo3(arobas)sjbr.ca>
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -28,7 +28,6 @@ namespace SJBR\SrFreecap\ViewHelpers;
 
 use SJBR\SrFreecap\ViewHelpers\TranslateViewHelper;
 use TYPO3\CMS\Core\Session\Backend\Exception\SessionNotFoundException;
-use TYPO3\CMS\Core\Utility\ClientUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
@@ -79,8 +78,8 @@ class AudioViewHelper extends AbstractTagBasedViewHelper
 		$translator = GeneralUtility::makeInstance(TranslateViewHelper::class);
 		$translator->injectConfigurationManager($this->configurationManager);
 		// Get browser info: in IE 8, we will use a simple link, as dynamic insertion of object element gives unpredictable results
-        $browserInfo = ClientUtility::getBrowserInfo(GeneralUtility::getIndpEnv('HTTP_USER_AGENT'));
-        $browerIsIE8 = $browserInfo['browser'] == 'msie' && $browserInfo['version'] == '8';
+        $browserInfo = GeneralUtility::getIndpEnv('HTTP_USER_AGENT');
+        $browerIsIE8 = strpos($browserInfo, 'MSIE 8') !== false;
 		// Generate the icon
 		if ($settings['accessibleOutput'] && (int)$GLOBALS['TYPO3_CONF_VARS']['SYS']['UTF8filesystem']) {
 			$fakeId = GeneralUtility::shortMD5(uniqid (rand()),5);
