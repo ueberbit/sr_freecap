@@ -41,11 +41,11 @@
 			</trans-unit>
 			<trans-unit id="click_here_accessible" xml:space="preserve" approved="yes">
 				<source>Click here for audio version of the word to enter.</source>
-				<target>Haga clic aquí para una oír una versión audio de las letras.</target>
+				<target>Haga clic aquí para oír una versión audio de las letras.</target>
 			</trans-unit>
 			<trans-unit id="click_here_accessible_informal" xml:space="preserve" approved="yes">
 				<source>Click here for audio version of the word to enter.</source>
-				<target>Haz clic aquí para una oír una versión audio de las letras.</target>
+				<target>Haz clic aquí para oír una versión audio de las letras.</target>
 			</trans-unit>
 			<trans-unit id="click_here_accessible_before_link" xml:space="preserve" approved="yes">
 				<source>For </source>
