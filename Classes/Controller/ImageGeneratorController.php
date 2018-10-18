@@ -1,38 +1,44 @@
 <?php
 namespace SJBR\SrFreecap\Controller;
 
-/***************************************************************
-*  Copyright notice
-*
-*  (c) 2012-2015 Stanislas Rolland <typo3(arobas)sjbr.ca>
-*  All rights reserved
-*
-*  This script is part of the TYPO3 project. The TYPO3 project is
-*  free software; you can redistribute it and/or modify
-*  it under the terms of the GNU General Public License as published by
-*  the Free Software Foundation; either version 2 of the License, or
-*  (at your option) any later version.
-*
-*  The GNU General Public License can be found at
-*  http://www.gnu.org/copyleft/gpl.html.
-*  A copy is found in the textfile GPL.txt and important notices to the license
-*  from the author is found in LICENSE.txt distributed with these scripts.
-*
-*
-*  This script is distributed in the hope that it will be useful,
-*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*  GNU General Public License for more details.
-*
-*  This copyright notice MUST APPEAR in all copies of the script!
-***************************************************************/
+/*
+ *  Copyright notice
+ *
+ *  (c) 2012-2018 Stanislas Rolland <typo3(arobas)sjbr.ca>
+ *  All rights reserved
+ *
+ *  This script is part of the TYPO3 project. The TYPO3 project is
+ *  free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  The GNU General Public License can be found at
+ *  http://www.gnu.org/copyleft/gpl.html.
+ *  A copy is found in the textfile GPL.txt and important notices to the license
+ *  from the author is found in LICENSE.txt distributed with these scripts.
+ *
+ *
+ *  This script is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  This copyright notice MUST APPEAR in all copies of the script!
+ */
+
+use SJBR\SrFreecap\Domain\Repository\WordRepository;
+use TYPO3\CMS\Core\Core\Environment;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
+use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
+
 /**
  * Renders the CAPTCHA image
- *
- * @author	Stanislas Rolland	<typo3(arobas)sjbr.ca>
  */
-class ImageGeneratorController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController {
-
+class ImageGeneratorController extends ActionController
+{
 	/**
 	 * @var string Name of the extension this controller belongs to
 	 */
@@ -44,7 +50,7 @@ class ImageGeneratorController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionC
 	protected $extensionKey = 'sr_freecap';
 
 	/**
-	 * @var \SJBR\SrFreecap\Domain\Repository\WordRepository
+	 * @var WordRepository
 	 */
 	protected $wordRepository;
 
@@ -53,9 +59,10 @@ class ImageGeneratorController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionC
 	 *
 	 * @return void
 	 */
-	protected function initializeAction() {
+	protected function initializeAction()
+	{
 		// Get an instance of the word repository
-		$this->wordRepository = $this->objectManager->get('SJBR\\SrFreecap\\Domain\\Repository\\WordRepository');
+		$this->wordRepository = $this->objectManager->get(WordRepository::class);
 	}
 
 	/**
@@ -63,7 +70,8 @@ class ImageGeneratorController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionC
 	 *
 	 * @return string empty string (image is sent by view)
 	 */
-	public function showAction() {
+	public function showAction()
+	{
 		// Get session data
 		$word = $this->wordRepository->getWord();
 		// Which type of hash to use
@@ -85,20 +93,20 @@ class ImageGeneratorController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionC
 	 * @return void
 	 * @api
 	 */
-	protected function processSettings () {
-
+	protected function processSettings()
+	{
 		// Image type:
 		// possible values: "jpg", "png", "gif"
 		// jpg doesn't support transparency (transparent bg option ends up white)
 		// png isn't supported by old browsers (see http://www.libpng.org/pub/png/pngstatus.html)
 		// gif may not be supported by your GD Lib.
 		$this->settings['imageFormat'] = $this->settings['imageFormat'] ? $this->settings['imageFormat'] : 'png';
-		
+
 		// true = generate pseudo-random string, false = use dictionary
 		// dictionary is easier to recognise
 		// - both for humans and computers, so use random string if you're paranoid.
-		$this->settings['useWordsList'] = $this->settings['useWordsList'] ? TRUE : FALSE;
-		
+		$this->settings['useWordsList'] = $this->settings['useWordsList'] ? true : false;
+
 		// if your server is NOT set up to deny web access to files beginning ".ht"
 		// then you should ensure the dictionary file is kept outside the web directory
 		// eg: if www.foo.com/index.html points to c:\website\www\index.html
@@ -107,7 +115,7 @@ class ImageGeneratorController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionC
 		// you should NOT be able to view the contents.
 		// can leave this blank if not using dictionary
 		$this->settings['wordsListLocation'] = \SJBR\SrFreecap\Utility\LocalizationUtility::getWordsListLocation($this->settings['defaultWordsList']);
-		
+
 		// Used for non-dictionary word generation and to calculate image width
 		$this->settings['maxWordLength'] = $this->settings['maxWordLength'] ? $this->settings['maxWordLength'] : 6;
 
@@ -130,24 +138,24 @@ class ImageGeneratorController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionC
 		// so are not suitable for most other uses
 		// to increase security, you really should add other fonts
 		if ($this->settings['generateNumbers']) {
-			$this->settings['fontLocations'] = Array('EXT:' . $this->extensionKey . '/Resources/Private/Captcha/Fonts/anonymous.gdf');
+			$this->settings['fontLocations'] = ['EXT:' . $this->extensionKey . '/Resources/Private/Captcha/Fonts/anonymous.gdf'];
 		} else {
-			$this->settings['fontLocations'] = Array(
+			$this->settings['fontLocations'] = [
 				'EXT:' . $this->extensionKey . '/Resources/Private/Captcha/Fonts/freecap_font1.gdf',
 				'EXT:' . $this->extensionKey . '/Resources/Private/Captcha/Fonts/freecap_font2.gdf',
 				'EXT:' . $this->extensionKey . '/Resources/Private/Captcha/Fonts/freecap_font3.gdf',
 				'EXT:' . $this->extensionKey . '/Resources/Private/Captcha/Fonts/freecap_font4.gdf',
 				'EXT:' . $this->extensionKey . '/Resources/Private/Captcha/Fonts/freecap_font5.gdf'
-				);
+				];
 		}
 		if ($this->settings['fontFiles']) {
-			$this->settings['fontLocations'] = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $this->settings['fontFiles'], 1);
+			$this->settings['fontLocations'] = GeneralUtility::trimExplode(',', $this->settings['fontFiles'], 1);
 		}
 		for ($i = 0; $i < sizeof($this->settings['fontLocations']); $i++) {
 			if (substr($this->settings['fontLocations'][$i],0,4) == 'EXT:') {
-				$this->settings['fontLocations'][$i] = \TYPO3\CMS\Core\Utility\GeneralUtility::getFileAbsFileName($this->settings['fontLocations'][$i]);
+				$this->settings['fontLocations'][$i] = GeneralUtility::getFileAbsFileName($this->settings['fontLocations'][$i]);
 			} else {
-				$this->settings['fontLocations'][$i] = PATH_site . 'uploads/' . \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::getCN($this->extensionKey) . '/' . $this->settings['fontLocations'][$i];
+				$this->settings['fontLocations'][$i] = Environment::getPublicPath() . '/uploads/' . ExtensionManagementUtility::getCN($this->extensionKey) . '/' . $this->settings['fontLocations'][$i];
 			}
 		}
 
@@ -161,13 +169,13 @@ class ImageGeneratorController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionC
 		}
 
 		// Text position
-		$this->settings['textPosition'] = array();
+		$this->settings['textPosition'] = [];
 		$this->settings['textPosition']['horizontal'] = $this->settings['textHorizontalPosition'] ? intval($this->settings['textHorizontalPosition']) : 32;
 		$this->settings['textPosition']['vertical'] = $this->settings['textVerticalPosition'] ? intval($this->settings['textVerticalPosition']) : 15;
 		// Text morphing factor
 		$this->settings['morphFactor'] = $this->settings['morphFactor'] ? $this->settings['morphFactor'] : 0;
 		// Limits for text color
-		$this->settings['colorMaximum'] = array();
+		$this->settings['colorMaximum'] = [];
 		if (isset($this->settings['colorMaximumDarkness'])) {
 			$this->settings['colorMaximum']['darkness'] = intval($this->settings['colorMaximumDarkness']);
 		}
@@ -178,29 +186,29 @@ class ImageGeneratorController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionC
 		// Background
 		// Many thanks to http://ocr-research.org.ua and http://sam.zoy.org/pwntcha/ for testing
 		// for jpgs, 'transparent' is white
-		if (!in_array($this->settings['backgroundType'], array('Transparent', 'White with grid', 'White with squiggles', 'Morphed image blocks'))) {
+		if (!in_array($this->settings['backgroundType'], ['Transparent', 'White with grid', 'White with squiggles', 'Morphed image blocks'])) {
 			$this->settings['backgroundType'] = 'White with grid';
 		}
 		// Should we blur the background? (looks nicer, makes text easier to read, takes longer)
-		$this->settings['backgroundBlur'] = ($this->settings['backgroundBlur'] || !isset($this->settings['backgroundBlur'])) ? TRUE : FALSE;
+		$this->settings['backgroundBlur'] = ($this->settings['backgroundBlur'] || !isset($this->settings['backgroundBlur'])) ? true : false;
 		// For background type 'Morphed image blocks', which images should we use?
 		// If you add your own, make sure they're fairly 'busy' images (ie a lot of shapes in them)
-		$this->settings['backgroundImages'] = Array(
+		$this->settings['backgroundImages'] = [
 			'EXT:' . $this->extensionKey . '/Resources/Private/Captcha/Images/freecap_im1.jpg',
 			'EXT:' . $this->extensionKey . '/Resources/Private/Captcha/Images/freecap_im2.jpg',
 			'EXT:' . $this->extensionKey . '/Resources/Private/Captcha/Images/freecap_im3.jpg',
 			'EXT:' . $this->extensionKey . '/Resources/Private/Captcha/Images/freecap_im4.jpg',
 			'EXT:' . $this->extensionKey . '/Resources/Private/Captcha/Images/freecap_im5.jpg'
-			);
+			];
 		// For non-transparent backgrounds only:
 		// if 0, merges CAPTCHA with background
 		// if 1, write CAPTCHA over background
 		$this->settings['mergeWithBackground'] = $this->settings['mergeWithBackground'] ? 0 : 1;
 		// Should we morph the background? (recommend yes, but takes a little longer to compute)
-		$this->settings['backgroundMorph'] = $this->settings['backgroundMorph'] ? TRUE : FALSE;
-		
+		$this->settings['backgroundMorph'] = $this->settings['backgroundMorph'] ? true : false;
+
 		// Read each font and get font character widths
-		$this->settings['fontWidths'] = Array();
+		$this->settings['fontWidths'] = [];
 		for ($i=0 ; $i < sizeof($this->settings['fontLocations']); $i++)	{
 			$handle = fopen($this->settings['fontLocations'][$i],"r");
 			// Read header of GD font, up to char width
@@ -219,8 +227,8 @@ class ImageGeneratorController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionC
 		// or more simply:
 		// "for use only on example.org";
 		// reword or add lines as you please
-		$this->settings['siteTag'] = $this->settings['siteTag'] ? explode('|', \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate('site_tag', $this->extensionName, isset($this->settings['siteTagDomain']) ? $this->settings['siteTagDomain'] : 'example.org')) : array();
-		
+		$this->settings['siteTag'] = $this->settings['siteTag'] ? explode('|', LocalizationUtility::translate('site_tag', $this->extensionName, [isset($this->settings['siteTagDomain']) ? $this->settings['siteTagDomain'] : 'example.org'])) : [];
+
 		// where to write the above:
 		// 0=top
 		// 1=bottom

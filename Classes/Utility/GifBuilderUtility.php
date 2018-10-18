@@ -1,7 +1,7 @@
 <?php
 namespace SJBR\SrFreecap\Utility;
 
-/***************************************************************
+/*
  *  Copyright notice
  *
  *  (c) 2012-2018 Stanislas Rolland <typo3(arobas)sjbr.ca>
@@ -25,8 +25,9 @@ namespace SJBR\SrFreecap\Utility;
  *  GNU General Public License for more details.
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
+use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\PathUtility;
 use TYPO3\CMS\Frontend\Imaging\GifBuilder;
@@ -44,7 +45,7 @@ class GifBuilderUtility extends GifBuilder
 	 */
 	public function checkFile($file)
 	{
-		$file = GeneralUtility::getFileAbsFileName(PATH_site . $file);
+		$file = GeneralUtility::getFileAbsFileName(Environment::getPublicPath() . '/' . $file);
         $file = PathUtility::stripPathSitePrefix($file);
 		return $file;
 	}
@@ -60,6 +61,6 @@ class GifBuilderUtility extends GifBuilder
 	 */
 	public function ImageWrite($destImg, $theImage, $quality = 0)
 	{
-		return parent::ImageWrite($destImg, PATH_site.$theImage, $quality);
+		return parent::ImageWrite($destImg, Environment::getPublicPath() . '/' . $theImage, $quality);
  	}
 }

@@ -425,6 +425,8 @@ class ImageContentUtility {
 		header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
 		header('Pragma: no-cache');
 		header('Cache-Control: no-cache, no-store, must-revalidate');
+		// Setting privacy policy header for IE in popup window
+		header('P3P:CP="IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT"');
 		switch ($imageType) {
 			case 'jpg':
 				header('Content-Type: image/jpeg');

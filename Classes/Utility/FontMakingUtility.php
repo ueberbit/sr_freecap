@@ -28,7 +28,6 @@ namespace SJBR\SrFreecap\Utility;
  */
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Core\Utility\VersionNumberUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 /**
@@ -81,7 +80,6 @@ class FontMakingUtility
 		}
 		$objectManager = GeneralUtility::makeInstance(ObjectManager::class);
 		$gifCreator = $objectManager->get(GifBuilderUtility::class);
-		$gifCreator->init();
 		if ($GLOBALS['TYPO3_CONF_VARS']['GFX']['gdlib']) {
 			$gifCreator->start($gifObjArray, array());
 			return $gifCreator->gifBuild();

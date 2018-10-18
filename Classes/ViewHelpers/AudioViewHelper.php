@@ -1,7 +1,7 @@
 <?php
 namespace SJBR\SrFreecap\ViewHelpers;
 
-/***************************************************************
+/*
  *  Copyright notice
  *
  *  (c) 2013-2018 Stanislas Rolland <typo3(arobas)sjbr.ca>
@@ -24,13 +24,17 @@ namespace SJBR\SrFreecap\ViewHelpers;
  *  GNU General Public License for more details.
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use SJBR\SrFreecap\ViewHelpers\TranslateViewHelper;
+use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Session\Backend\Exception\SessionNotFoundException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\PathUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
-use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
+use TYPO3\CMS\Extbase\Object\ObjectManager;
+use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
 
 class AudioViewHelper extends AbstractTagBasedViewHelper
 {
@@ -58,6 +62,12 @@ class AudioViewHelper extends AbstractTagBasedViewHelper
 		$this->configurationManager = $configurationManager;
 	}
 
+	public function initializeArguments()
+	{
+		parent::initializeArguments();
+		$this->registerArgument('suffix', 'string', 'Suffix to be appended to the extenstion key when forming css class names', false, '');
+	}
+
 	/**
 	 * Render the captcha audio rendering request icon
 	 *
@@ -67,7 +77,7 @@ class AudioViewHelper extends AbstractTagBasedViewHelper
 	public function render($suffix = '')
 	{
 		// This viewhelper needs a frontend user session
-		if (!is_object($GLOBALS ['TSFE']) || !isset($GLOBALS ['TSFE']->fe_user)) {
+		if (!is_object($this->getTypoScriptFrontendController()) || !isset($this->getTypoScriptFrontendController()->fe_user)) {
 			throw new SessionNotFoundException('No frontend user found in session!');
 		}
 
@@ -75,17 +85,19 @@ class AudioViewHelper extends AbstractTagBasedViewHelper
 		// Get the plugin configuration
 		$settings = $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_SETTINGS, $this->extensionName, $this->pluginName);
 		// Get the translation view helper
-		$translator = GeneralUtility::makeInstance(TranslateViewHelper::class);
-		$translator->injectConfigurationManager($this->configurationManager);
+		$objectManager = GeneralUtility::makeInstance(ObjectManager::class);
+		$translator = $objectManager->get(TranslateViewHelper::class);
 		// Get browser info: in IE 8, we will use a simple link, as dynamic insertion of object element gives unpredictable results
         $browserInfo = GeneralUtility::getIndpEnv('HTTP_USER_AGENT');
         $browerIsIE8 = strpos($browserInfo, 'MSIE 8') !== false;
 		// Generate the icon
 		if ($settings['accessibleOutput'] && (int)$GLOBALS['TYPO3_CONF_VARS']['SYS']['UTF8filesystem']) {
+			$context = GeneralUtility::makeInstance(Context::class);
+			$languageAspect = $context->getAspect('language');
 			$fakeId = GeneralUtility::shortMD5(uniqid (rand()),5);
 			$siteURL = GeneralUtility::getIndpEnv('TYPO3_SITE_URL');
-			$urlParams = array(
-				'eID' => 'sr_freecap_EidDispatcher',
+			$urlParams = [
+				'eIDSR' => 'sr_freecap_EidDispatcher',
 				'id' => $GLOBALS['TSFE']->id,
 				'vendorName' => 'SJBR',
 				'extensionName' => $this->extensionName,
@@ -93,13 +105,10 @@ class AudioViewHelper extends AbstractTagBasedViewHelper
 				'controllerName' => 'AudioPlayer',
 				'actionName' => 'play',
 				'formatName' => $browerIsIE8 ? 'mp3' : 'wav',
-			);
-			$L = GeneralUtility::_GP('L');
-			if (isset($L)) {
-				$urlParams['L'] = htmlspecialchars($L);
-			}
-			if ($GLOBALS['TSFE']->MP) {
-				$urlParams['MP'] = $GLOBALS['TSFE']->MP;
+				'L' => $languageAspect->getId()
+			];
+			if ($this->getTypoScriptFrontendController()->MP) {
+				$urlParams['MP'] = $this->getTypoScriptFrontendController()->MP;
 			}
 			$audioURL = $siteURL . 'index.php?' . ltrim(GeneralUtility::implodeArrayForUrl('', $urlParams), '&');
 			if ($settings['accessibleOutputImage']) {
@@ -107,13 +116,13 @@ class AudioViewHelper extends AbstractTagBasedViewHelper
 					$value = '<a href="' . $audioURL . '&set=' . rand()
 						. '" title="' . $translator->render('click_here_accessible') . '">'
 						. '<img alt="' . $translator->render('click_here_accessible') . '"'
-						. ' src="' . $siteURL . str_replace(PATH_site, '', GeneralUtility::getFileAbsFileName($settings['accessibleOutputImage'])) . '"'
+						. ' src="' . $siteURL . PathUtility::stripPathSitePrefix(GeneralUtility::getFileAbsFileName($settings['accessibleOutputImage'])) . '"'
 						. $this->getClassAttribute('image-accessible', $suffix) . ' />'
 						. '</a>';
 				} else {
 					$value = '<input type="image" alt="' . $translator->render('click_here_accessible') . '"'
 						. ' title="' . $translator->render('click_here_accessible') . '"'
-						. ' src="' . $siteURL . str_replace(PATH_site, '', GeneralUtility::getFileAbsFileName($settings['accessibleOutputImage'])) . '"'
+						. ' src="' . $siteURL . PathUtility::stripPathSitePrefix(GeneralUtility::getFileAbsFileName($settings['accessibleOutputImage'])) . '"'
 						. ' onclick="' . $this->extensionName . '.playCaptcha(\'' . $fakeId . '\', \'' . $audioURL . '\', \'' . $translator->render('noPlayMessage') . '\');return false;" style="cursor: pointer;"'
 						. $this->getClassAttribute('image-accessible', $suffix) . ' />';
 				}
@@ -151,4 +160,12 @@ class AudioViewHelper extends AbstractTagBasedViewHelper
 	{
 		return ' class="' . trim(str_replace('_', '-', $this->pluginName) . ($suffix ? '-' . $suffix . '-' : '-') . $class) . '"';
 	}
+
+    /**
+     * @return TypoScriptFrontendController
+     */
+    protected function getTypoScriptFrontendController()
+    {
+        return $GLOBALS['TSFE'];
+    }
 }

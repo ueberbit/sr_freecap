@@ -2,14 +2,15 @@
 defined('TYPO3_MODE') or die();
 
 call_user_func(
-    function($extKey, $extConf)
+    function($extKey)
     {
+    	$extConf = (bool)\TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Configuration\ExtensionConfiguration::class)->get($extKey);
 		// Setting the encryption algorithm
 		$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['sr_freecap']['encryptionAlgorithm'] = isset($extConf['encryptionAlgorithm']) ? $extConf['encryptionAlgorithm'] : 'AES-256-CBC';
 		$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['sr_freecap']['salt'] = isset($extConf['salt']) ? $extConf['salt'] : 'cH!swe!retReGu7W6bEDRup7usuDUh9THeD2CHeGE*ewr4n39=E@rAsp7c-Ph@pH';
 
 		// Dispatching requests to image generator and audio player
-		$GLOBALS['TYPO3_CONF_VARS']['FE']['eID_include']['sr_freecap_EidDispatcher'] = 'EXT:sr_freecap/Resources/Private/Eid/EidDispatcher.php';
+		$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['sr_freecap']['eIDSR_include']['sr_freecap_EidDispatcher'] = \SJBR\SrFreecap\Http\EidDispatcher::class . '::initAndDispatch';
 
 		// Configuring the captcha image generator
 		\TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
@@ -45,6 +46,5 @@ call_user_func(
 			]
 		);
 	},
-	'sr_freecap',
-	unserialize($_EXTCONF)
+	'sr_freecap'
 );

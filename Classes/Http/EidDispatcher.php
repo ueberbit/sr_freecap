@@ -1,10 +1,11 @@
 <?php
-namespace SJBR\SrFreecap\Utility;
-/***************************************************************
+namespace SJBR\SrFreecap\Http;
+
+/*
  * Copyright notice
  *
  * 2010 Daniel Lienert <daniel@lienert.cc>, Michael Knoll <mimi@kaktusteam.de>
- * 2012-2015 Stanislas Rolland <typo3(arobas)sjbr.ca>
+ * 2012-2018 Stanislas Rolland <typo3(arobas)sjbr.ca>
  * All rights reserved
  *
  *
@@ -23,30 +24,37 @@ namespace SJBR\SrFreecap\Utility;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
+use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Error\Http\BadRequestException;
+use TYPO3\CMS\Core\Http\NullResponse;
+use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\RootlineUtility;
 use TYPO3\CMS\Core\Utility\VersionNumberUtility;
+use TYPO3\CMS\Extbase\Core\Bootstrap;
+use TYPO3\CMS\Extbase\Mvc\Dispatcher;
+use TYPO3\CMS\Extbase\Mvc\Web\Request;
+use TYPO3\CMS\Extbase\Mvc\Web\Response;
+use TYPO3\CMS\Extbase\Object\ObjectManager;
+use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 /**
- * Utility to dispatch the eid request
- *
- * @author Daniel Lienert <daniel@lienert.cc>
- * @author Stanislas Rolland <typo3(arobas)sjbr.ca>
-*/
-class EidUtility {
-
+ * Dispatch the eid request
+ */
+class EidDispatcher
+{
 	/**
 	 * Array of all request Arguments
 	 *
 	 * @var array
 	 */
-	protected $requestArguments = array();
+	protected $requestArguments = [];
 
 	/**
 	 * Extbase Object Manager
-	 * @var \TYPO3\CMS\Extbase\Object\ObjectManager
+	 * @var ObjectManager
 	 */
 	protected $objectManager;
 
@@ -83,7 +91,7 @@ class EidUtility {
 	/**
 	 * @var array
 	 */
-	protected $arguments = array();
+	protected $arguments = [];
 
 	/**
 	 * @var integer
@@ -94,8 +102,9 @@ class EidUtility {
 	 * Constructor
 	 *
 	 */
-	public function __construct() {
-		$this->objectManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
+	public function __construct()
+	{
+		$this->objectManager = GeneralUtility::makeInstance(ObjectManager::class);
 	}
 
 	/**
@@ -103,9 +112,9 @@ class EidUtility {
 	 *
 	 * Call this function if you want to use this dispatcher "standalone"
 	 */
-	public function initAndDispatch() {
-		return $this->initTypoScriptFrontendController()
-			->initTypoScriptConfiguration()
+	public function initAndDispatch()
+	{
+		return $this->initTypoScriptConfiguration()
 			->initLanguage()
 			->initCallArguments()
 			->dispatch();
@@ -115,70 +124,51 @@ class EidUtility {
 	 * Builds an extbase context and returns the response
 	 *
 	 */
-	protected function dispatch() {
-		/* @var $bootstrap \TYPO3\CMS\Extbase\Core\Bootstrap */
-		$bootstrap = $this->objectManager->get('TYPO3\\CMS\\Extbase\\Core\\Bootstrap');
+	protected function dispatch()
+	{
+		$bootstrap = $this->objectManager->get(Bootstrap::class);
 		$configuration['vendorName'] = $this->vendorName;
 		$configuration['extensionName'] = $this->extensionName;
 		$configuration['pluginName'] = $this->pluginName;
 		$bootstrap->initialize($configuration);
 		$request = $this->buildRequest();
-		/* @var $response \TYPO3\CMS\Extbase\Mvc\Web\Response */
-		$response = $this->objectManager->get('TYPO3\\CMS\\Extbase\\Mvc\\Web\\Response');
-		/* @var $dispatcher \TYPO3\CMS\Extbase\Mvc\Dispatcher */
-		$dispatcher = $this->objectManager->get('TYPO3\\CMS\\Extbase\\Mvc\\Dispatcher');
+		$response = $this->objectManager->get(Response::class);
+		$dispatcher = $this->objectManager->get(Dispatcher::class);
 		try {
 			$dispatcher->dispatch($request, $response);
 		} catch (\Exception $e) {
 			throw new BadRequestException('An argument is missing or invalid', 1394587024);
 		}
-		if ($GLOBALS ['TSFE']->fe_user) {
-			$GLOBALS ['TSFE']->fe_user->storeSessionData();
+		if (isset($this->getTypoScriptFrontendController()->fe_user)) {
+			$this->getTypoScriptFrontendController()->fe_user->storeSessionData();
 		}
-		return $response->getContent();
-	}
-
-	/**
-	 * Create a TypoScript Frontend Controller
-	 *
-	 * @return \SJBR\SrFreecap\Utility\EidDispatcher
-	 */
-	protected function initTypoScriptFrontendController() {
-		// Get page uid and mount point, if any
-		$this->pageUid = GeneralUtility::_GET('id');
-		if (!isset($this->pageUid)) {
-			$this->pageUid = 0;
-		}
-		$this->pageUid = htmlspecialchars($this->pageUid);
-		$MP = htmlspecialchars(GeneralUtility::_GET('MP'));
-		\TYPO3\CMS\Frontend\Utility\EidUtility::initTCA();
-		$GLOBALS['TSFE'] = $this->objectManager->get('TYPO3\\CMS\\Frontend\\Controller\\TypoScriptFrontendController', $GLOBALS['TYPO3_CONF_VARS'], $this->pageUid, 0, true, '', '', $MP, '');
-		$GLOBALS['TSFE']->initFeUser();
-		$GLOBALS['TSFE']->determineId();
-		return $this;
+		// Output was already sent
+		return new NullResponse();
 	}
 
 	/**
 	 * Get the TypoScript configuration
 	 *
-	 * @return \SJBR\SrFreecap\Utility\EidDispatcher
+	 * @return \SJBR\SrFreecap\Http\EidDispatcher
 	 */
-	protected function initTypoScriptConfiguration() {
-		$GLOBALS['TSFE']->getPageAndRootline();
-		$GLOBALS['TSFE']->initTemplate();
-		$GLOBALS['TSFE']->tmpl->getFileName_backPath = PATH_site;
-		$GLOBALS['TSFE']->getConfigArray();
+	protected function initTypoScriptConfiguration()
+	{
+		$this->getTypoScriptFrontendController()->type = 0;
+		$context = GeneralUtility::makeInstance(Context::class);
+		$this->getTypoScriptFrontendController()->rootLine = GeneralUtility::makeInstance(RootlineUtility::class, $this->getTypoScriptFrontendController()->id, $this->getTypoScriptFrontendController()->MP, $context)->get();
+		$this->getTypoScriptFrontendController()->getConfigArray();
 		return $this;
 	}
 
 	/**
 	 * Set  language and locale
 	 *
-	 * @return \SJBR\SrFreecap\Utility\EidDispatcher
+	 * @return \SJBR\SrFreecap\Http\EidDispatcher
 	 */
-	protected function initLanguage() {
-		$GLOBALS['TSFE']->settingLanguage();
-		$GLOBALS['TSFE']->settingLocale();
+	protected function initLanguage()
+	{
+		$this->getTypoScriptFrontendController()->settingLanguage();
+		$this->getTypoScriptFrontendController()->settingLocale();
 		return $this;
 	}
 
@@ -187,9 +177,9 @@ class EidUtility {
 	 *
 	 * @return \TYPO3\CMS\Extbase\Mvc\Web\Request $request
 	 */
-	protected function buildRequest() {
-		/* @var $request \TYPO3\CMS\Extbase\Mvc\Web\Request */
-		$request = $this->objectManager->get('TYPO3\\CMS\\Extbase\\Mvc\\Web\\Request');
+	protected function buildRequest()
+	{
+		$request = $this->objectManager->get(Request::class);
 		$request->setControllerVendorName($this->vendorName);
 		$request->setControllerExtensionName($this->extensionName);
 		$request->setPluginName($this->pluginName);
@@ -203,7 +193,7 @@ class EidUtility {
 	/**
 	 * Prepare the call arguments
 	 *
-	 * @return \SJBR\SrFreecap\Utility\EidDispatcher
+	 * @return \SJBR\SrFreecap\Http\EidDispatcher
 	 */
 	public function initCallArguments() {
 		$request = GeneralUtility::_GP('request');
@@ -226,17 +216,19 @@ class EidUtility {
 	 *
 	 * @param string $request
 	 */
-	protected function setRequestArgumentsFromJSON($request) {
-		$requestArray = json_decode($request, TRUE);
+	protected function setRequestArgumentsFromJSON($request)
+	{
+		$requestArray = json_decode($request, true);
 		if (is_array($requestArray)) {
-			\TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule($this->requestArguments, $requestArray);
+			ArrayUtility::mergeRecursiveWithOverrule($this->requestArguments, $requestArray);
 		}
 	}
 
 	/**
 	 * Set the request array from the getPost array
 	 */
-	protected function setRequestArgumentsFromGetPost() {
+	protected function setRequestArgumentsFromGetPost()
+	{
 		$validArguments = array('vendorName', 'extensionName', 'pluginName', 'controllerName', 'actionName', 'formatName', 'arguments');
 		foreach ($validArguments as $argument) {
 			if (GeneralUtility::_GP($argument)) {
@@ -252,63 +244,70 @@ class EidUtility {
 
 	/**
 	 * @param string $vendorName
-	 * @return \SJBR\SrFreecap\Utility\EidDispatcher
+	 * @return \SJBR\SrFreecap\Http\EidDispatcher
 	 */
-	protected function setVendorName($vendorName) {
+	protected function setVendorName($vendorName)
+	{
 		$this->vendorName = htmlspecialchars((string)$vendorName);
 		return $this;
 	}
 
 	/**
 	 * @param string $extensionName
-	 * @return \SJBR\SrFreecap\Utility\EidDispatcher
+	 * @return \SJBR\SrFreecap\Http\EidDispatcher
 	 */
-	protected function setExtensionName($extensionName) {
+	protected function setExtensionName($extensionName)
+	{
 		$this->extensionName = htmlspecialchars((string)$extensionName);
 		return $this;
 	}
 
 	/**
 	 * @param string $pluginName
-	 * @return \SJBR\SrFreecap\Utility\EidDispatcher
+	 * @return \SJBR\SrFreecap\Http\EidDispatcher
 	 */
-	protected function setPluginName($pluginName = '') {
+	protected function setPluginName($pluginName = '')
+	{
 		$this->pluginName = htmlspecialchars((string)$pluginName);
 		return $this;
 	}
 
 	/**
 	 * @param string $controllerName
-	 * @return \SJBR\SrFreecap\Utility\EidDispatcher
+	 * @return \SJBR\SrFreecap\Http\EidDispatcher
 	 */
-	protected function setControllerName($controllerName = '') {
+	protected function setControllerName($controllerName = '')
+	{
 		$this->controllerName = htmlspecialchars((string)$controllerName);
 		return $this;
 	}
 
 	/**
 	 * @param string $actionName
-	 * @return \SJBR\SrFreecap\Utility\EidDispatcher
+	 * @return \SJBR\SrFreecap\Http\EidDispatcher
 	 */
-	protected function setActionName($actionName = 'index') {
+	protected function setActionName($actionName = 'index')
+	{
 		$this->actionName = htmlspecialchars((string)$actionName);
 		return $this;
 	}
 
 	/**
 	 * @param string $formatName
-	 * @return \SJBR\SrFreecap\Utility\EidDispatcher
+	 * @return \SJBR\SrFreecap\Http\EidDispatcher
 	 */
-	protected function setFormatName($formatName = 'txt') {
+	protected function setFormatName($formatName = 'txt')
+	{
 		$this->formatName = htmlspecialchars((string)$formatName);
 		return $this;
 	}
 
 	/**
 	 * @param array $arguments
-	 * @return \SJBR\SrFreecap\Utility\EidDispatcher
+	 * @return \SJBR\SrFreecap\Http\EidDispatcher
 	 */
-	protected function setArguments($arguments) {
+	protected function setArguments($arguments)
+	{
 		if (!is_array($arguments)) {
 			$this->arguments = array();
 		} else {
@@ -316,4 +315,12 @@ class EidUtility {
 		}
 		return $this;
 	}
+
+    /**
+     * @return TypoScriptFrontendController
+     */
+    protected function getTypoScriptFrontendController()
+    {
+        return $GLOBALS['TSFE'];
+    }
 }

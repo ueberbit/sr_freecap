@@ -2,7 +2,7 @@
 declare(encoding='ISO-8859-2');
 namespace SJBR\SrFreecap\Domain\Model;
 
-/***************************************************************
+/*
  *  Copyright notice
  *
  *  (c) 2012-2018 Stanislas Rolland <typo3@sjbr.ca>
@@ -26,10 +26,12 @@ namespace SJBR\SrFreecap\Domain\Model;
  *  GNU General Public License for more details.
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use SJBR\SrFreecap\Utility\FontMakingUtility;
 use SJBR\SrFreecap\Validation\Validator\TtfFileValidator;
+use TYPO3\CMS\Core\Core\Environment;
+use TYPO3\CMS\Extbase\Annotation\Validate;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 
 /**
@@ -47,13 +49,13 @@ class Font extends AbstractEntity
 
 	/**
 	 * @var int
-	 * @validate NumberRange(minimum=5, maximum=255)
+	 * @Validate("NumberRange", options={"minimum": 5, "maximum": 255})
 	 */
 	protected $characterWidth;
 
 	/**
 	 * @var int
-	 * @validate NumberRange(minimum=5, maximum=255)
+	 * @Validate("NumberRange", options={"minimum": 5, "maximum": 255})
 	 */
 	protected $characterHeight;
 
@@ -64,9 +66,9 @@ class Font extends AbstractEntity
 
 	/**
 	 * @var string
-	 * @validate NotEmpty
-	 * @validate StringLength(minimum=1, maximum=255)
-	 * @validate \SJBR\SrFreecap\Validation\Validator\TtfFileValidator
+	 * @Validate("NotEmpty")
+	 * @Validate("StringLength", options={"minimum": 1, "maximum": 255})
+	 * @Validate("\SJBR\SrFreecap\Validation\Validator\TtfFileValidator")
 	 **/
 	protected $ttfFontFileName = '';
 
@@ -196,7 +198,7 @@ class Font extends AbstractEntity
 				$startCharacter = 'a';
 				break;
 			case 2:
-				// Note: This script must be iso-8859-1-encoded
+				// Note: This script must be iso-8859-2-encoded
 				$characters = 'a,b,c,d,e,f,g,h,i,j,k,l,m,n,o'
 					.',p,q,r,s,t,u,v,w,x,y,z,-,-,-,-,-'
 					.',-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-'
@@ -218,9 +220,9 @@ class Font extends AbstractEntity
 		$numberOfCharacters = count(explode(',', $characters));
 		$this->setPngImageFileName(FontMakingUtility::makeFontImage($characters, $this->ttfFontFileName, $this->characterWidth, $this->characterHeight));
 		if ($GLOBALS['TYPO3_CONF_VARS']['GFX']['gdlib_png']) {
-			$image = @ImageCreateFromPNG(PATH_site . $this->pngImageFileName);
+			$image = @ImageCreateFromPNG(Environment::getPublicPath() . '/' . $this->pngImageFileName);
 		} else {
-			$image = @ImageCreateFromGIF(PATH_site . $this->pngImageFileName);
+			$image = @ImageCreateFromGIF(Environment::getPublicPath() . '/' . $this->pngImageFileName);
 		}
 		if ($image !== false) {
 			$this->setGdFontdata(FontMakingUtility::makeFont($image, $numberOfCharacters, $startCharacter, $this->characterWidth, $this->characterHeight, $this->endianness));

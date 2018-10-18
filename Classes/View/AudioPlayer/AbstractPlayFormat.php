@@ -4,7 +4,7 @@ namespace SJBR\SrFreecap\View\AudioPlayer;
 /*
  *  Copyright notice
  *
- *  (c) 2013-2016 Stanislas Rolland <typo3(arobas)sjbr.ca>
+ *  (c) 2013-2018 Stanislas Rolland <typo3(arobas)sjbr.ca>
  *  All rights reserved
  *
  *  free software; you can redistribute it and/or modify
@@ -67,7 +67,8 @@ class AbstractPlayFormat implements ViewInterface
 	 * @param mixed $value Value of object
 	 * @return ViewInterface an instance of $this, to enable chaining
 	 */
-	public function assign($key, $value) {
+	public function assign($key, $value)
+	{
 		switch ($key) {
 			case 'word':
 				$this->word = $value;
@@ -111,8 +112,10 @@ class AbstractPlayFormat implements ViewInterface
 		$letterRenderingFiles = $this->getLetterRenderingFiles($word);
 		// Join the files
 		$audioContent = AudioContentUtility::joinAudioFiles($letterRenderingFiles);
-		// Output proper headers
+		// Output proper headers and echo audio content
 		$this->sendHeaders($audioContent);
+		// Send audio content
+		$this->sendAudioContent($audioContent);
 		// Return the audio content
 		return $audioContent;
 	}
@@ -146,7 +149,7 @@ class AbstractPlayFormat implements ViewInterface
 	 */
 	protected function getLetterRenderingFiles($word, $extension = 'wav')
 	{
-		$letterRenderingFiles = array();
+		$letterRenderingFiles = [];
 		// Split the word
 		$letters = preg_split('//', $word, -1, PREG_SPLIT_NO_EMPTY);
 		// Get the directory containing the wav files
@@ -178,5 +181,19 @@ class AbstractPlayFormat implements ViewInterface
 		header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
 		header('Pragma: no-cache');
 		header('Cache-Control: no-cache, no-store, must-revalidate');
+		// Setting privacy policy header for IE in popup window
+		header('P3P:CP="IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT"');
+		echo $audioContent;
+	}
+
+	/**
+	 * Sends headers appropriate for wav content
+	 *
+	 * @param string $audioContent: the audio content that will be sent
+	 * @return	void
+	 */
+	protected function sendAudioContent($audioContent)
+	{
+		echo $audioContent;
 	}
 }

@@ -27,7 +27,7 @@ namespace SJBR\SrFreecap\Configuration;
  *  This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use TYPO3\CMS\Extensionmanager\ViewHelpers\Form\TypoScriptConstantsViewHelper;
+use TYPO3\CMS\Install\ViewHelpers\Form\TypoScriptConstantsViewHelper;
 
 /**
  * Class providing configuration help for extension SrFreecap
@@ -41,7 +41,7 @@ class ConfigurationHelper
 	 * @param TypoScriptConstantsViewHelper $pObj: The calling parent object.
 	 * @return string The HTML select field
 	 */
-	public function buildEncryptionAlgorithmSelector (array $params, TypoScriptConstantsViewHelper $pObj)
+	public function buildEncryptionAlgorithmSelector(array $params, TypoScriptConstantsViewHelper $pObj)
 	{
 		if (in_array('openssl', get_loaded_extensions())) {
 			$encryptionAlgorithms = openssl_get_cipher_methods(true);

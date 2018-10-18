@@ -1,4 +1,8 @@
 2018-10-18  Stanislas Rolland  <typo(arobas)sjbr.ca>
+	* Resolves #86688: Migrate to TYPO3 9 LTS
+	* Update version to 2.5.0
+
+2018-10-18  Stanislas Rolland  <typo(arobas)sjbr.ca>
 	* Resolves #86691: Incorrect keywords for composer
 	* Update version to 2.4.4
 

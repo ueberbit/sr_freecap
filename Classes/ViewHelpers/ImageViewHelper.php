@@ -1,10 +1,10 @@
 <?php
 namespace SJBR\SrFreecap\ViewHelpers;
 
-/***************************************************************
+/*
  *  Copyright notice
  *
- *  (c) 2013-2017 Stanislas Rolland <typo3(arobas)sjbr.ca>
+ *  (c) 2013-2018 Stanislas Rolland <typo3(arobas)sjbr.ca>
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -24,15 +24,19 @@ namespace SJBR\SrFreecap\ViewHelpers;
  *  GNU General Public License for more details.
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use SJBR\SrFreecap\ViewHelpers\TranslateViewHelper;
+use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Session\Backend\Exception\SessionNotFoundException;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\PathUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
-use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
+use TYPO3\CMS\Extbase\Object\ObjectManager;
+use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
 
 class ImageViewHelper extends AbstractTagBasedViewHelper
 {
@@ -65,6 +69,12 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
 		$this->configurationManager = $configurationManager;
 	}
 
+	public function initializeArguments()
+	{
+		parent::initializeArguments();
+		$this->registerArgument('suffix', 'string', 'Suffix to be appended to the extenstion key when forming css class names', false, '');
+	}
+
 	/**
 	 * Render the captcha image html
 	 *
@@ -74,7 +84,7 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
 	public function render($suffix = '')
 	{
 		// This viewhelper needs a frontend user session
-		if (!is_object($GLOBALS ['TSFE']) || !isset($GLOBALS ['TSFE']->fe_user)) {
+		if (!is_object($this->getTypoScriptFrontendController()) || !isset($this->getTypoScriptFrontendController()->fe_user)) {
 			throw new SessionNotFoundException('No frontend user found in session!');
 		}
 
@@ -82,35 +92,33 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
 
 		// Include the required JavaScript
 		$pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
-		$pageRenderer->addJsFooterFile(ExtensionManagementUtility::siteRelPath($this->extensionKey) . 'Resources/Public/JavaScript/freeCap.js');
+		$pageRenderer->addJsFooterFile(PathUtility::stripPathSitePrefix(ExtensionManagementUtility::extPath($this->extensionKey)) . 'Resources/Public/JavaScript/freeCap.js');
 
 		// Disable caching
-		$GLOBALS['TSFE']->no_cache = 1;
-
-		// Get the plugin configuration
-		$settings = $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_SETTINGS, $this->extensionName);
+		$this->getTypoScriptFrontendController()->no_cache = 1;
 
 		// Get the translation view helper
-		$translator = GeneralUtility::makeInstance(TranslateViewHelper::class);
-		$translator->injectConfigurationManager($this->configurationManager);
+		$objectManager = GeneralUtility::makeInstance(ObjectManager::class);
+		$translator = $objectManager->get(TranslateViewHelper::class);
 
 		// Generate the image url
 		$fakeId = GeneralUtility::shortMD5(uniqid (rand()),5);
 		$siteURL = GeneralUtility::getIndpEnv('TYPO3_SITE_URL');
-		$L = GeneralUtility::_GP('L');
-		$urlParams = array(
-			'eID' => 'sr_freecap_EidDispatcher',
-			'id' => $GLOBALS['TSFE']->id,
+		$context = GeneralUtility::makeInstance(Context::class);
+		$languageAspect = $context->getAspect('language');
+		$urlParams = [
+			'eIDSR' => 'sr_freecap_EidDispatcher',
+			'id' => $this->getTypoScriptFrontendController()->id,
 			'vendorName' => 'SJBR',
 			'extensionName' => 'SrFreecap',
 			'pluginName' => 'ImageGenerator',
 			'controllerName' => 'ImageGenerator',
 			'actionName' => 'show',
 			'formatName' => 'png',
-			'L' => $GLOBALS['TSFE']->sys_language_uid
-		);
-		if ($GLOBALS['TSFE']->MP) {
-			$urlParams['MP'] = $GLOBALS['TSFE']->MP;
+			'L' => $languageAspect->getId()
+		];
+		if ($this->getTypoScriptFrontendController()->MP) {
+			$urlParams['MP'] = $this->getTypoScriptFrontendController()->MP;
 		}
 		$urlParams['set'] = $fakeId;
 		$imageUrl = $siteURL . 'index.php?' . ltrim(GeneralUtility::implodeArrayForUrl('', $urlParams), '&');
@@ -137,4 +145,12 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
 	{
 		return ' class="' . trim(str_replace('_', '-', $this->pluginName) . ($suffix ? '-' . $suffix . '-' : '-') . $class) . '"';
 	}
+
+    /**
+     * @return TypoScriptFrontendController
+     */
+    protected function getTypoScriptFrontendController()
+    {
+        return $GLOBALS['TSFE'];
+    }
 }
