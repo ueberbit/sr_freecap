@@ -1,3 +1,7 @@
+2018-10-18  Stanislas Rolland  <typo(arobas)sjbr.ca>
+	* Resolves #86691: Incorrect keywords for composer
+	* Update version to 2.4.4
+
 2018-07-24  Stanislas Rolland  <typo(arobas)sjbr.ca>
 	* Resolves #85628: Error in Spanish localization file
 	* Resolves #85629: Remove dependency on TYPO3 ClientUtility
