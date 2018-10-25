@@ -92,7 +92,7 @@ class PiBaseApi
 	{
 		// Get the object manager
 		if ($this->objectManager === null) {
-			$this->objectManager = GeneralUtility::makeInstance(ObjectManager:class);
+			$this->objectManager = GeneralUtility::makeInstance(ObjectManager::class);
 		}
 		// Get the validator
 		$validator = $this->objectManager->get(CaptchaValidator::class);
