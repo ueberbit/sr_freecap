@@ -33,10 +33,8 @@ class EncryptionUtility
 {
 	/**
 	 * Salt
-	 *
-	 * @var string
 	 */
-	public const SALT = 'cH!swe!retReGu7W6bEDRup7usuDUh9THeD2CHeGE*ewr4n39=E@rAsp7c-Ph@pH';
+    const SALT = 'cH!swe!retReGu7W6bEDRup7usuDUh9THeD2CHeGE*ewr4n39=E@rAsp7c-Ph@pH';
 
 	/**
 	 * Encrypts a string
