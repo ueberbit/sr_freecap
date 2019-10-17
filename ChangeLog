@@ -1,3 +1,7 @@
+2019-07-19  Stanislas Rolland  <typo(arobas)sjbr.ca>
+	* Resolves Security Ticket#201907155760000027
+	* Update version to 2.5.3
+
 2018-11-02  Stanislas Rolland  <typo(arobas)sjbr.ca>
 	* Resolves #86843: Syntax error in class EncryptionUtility
 	* Update version to 2.5.2
