@@ -34,66 +34,66 @@ use TYPO3\CMS\Extbase\Validation\Validator\AbstractValidator;
  */
 class CaptchaValidator extends AbstractValidator
 {
-	/**
-	 * Specifies whether this validator accepts empty values.
-	 *
-	 * If this is true, the validators isValid() method is not called in case of an empty value
-	 * Note: A value is considered empty if it is null or an empty string!
-	 * By default all validators except for NotEmpty and the Composite Validators accept empty values
-	 *
-	 * @var bool
-	 */
-	protected $acceptsEmptyValues = false;
+    /**
+     * Specifies whether this validator accepts empty values.
+     *
+     * If this is true, the validators isValid() method is not called in case of an empty value
+     * Note: A value is considered empty if it is null or an empty string!
+     * By default all validators except for NotEmpty and the Composite Validators accept empty values
+     *
+     * @var bool
+     */
+    protected $acceptsEmptyValues = false;
 
-	/**
-	 * @var string Name of the extension this controller belongs to
-	 */
-	protected $extensionName = 'SrFreecap';
+    /**
+     * @var string Name of the extension this controller belongs to
+     */
+    protected $extensionName = 'SrFreecap';
 
-	/**
-	 * Check the word that was entered against the hashed value
-	 * Returns true, if the given property ($word) matches the session captcha value.
-	 *
-	 * @param string $word: the word that was entered and should be validated
-	 * @return boolean true, if the word entered matches the hash value, false if an error occured
-	 */
-	public function isValid($word)
-	{
-		$isValid = false;
-		// This validator needs a frontend user session
-		if (is_object($GLOBALS ['TSFE']) && isset($GLOBALS ['TSFE']->fe_user)) {
-			// Get session data
-			$objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-			$wordRepository = $objectManager->get(WordRepository::class);
-			$wordObject = $wordRepository->getWord();
-			$wordHash = $wordObject->getWordHash();
-			// Check the word hash against the stored hash value
-			if (!empty($wordHash) && !empty($word)) {
-				if ($wordObject->getHashFunction() == 'md5') {
-					// All freeCap words are lowercase.
-					// font #4 looks uppercase, but trust me, it's not...
-					if (md5(strtolower(utf8_decode($word))) == $wordHash) {
-						// Reset freeCap session vars
-						// Cannot stress enough how important it is to do this
-						// Defeats re-use of known image with spoofed session id
-						$wordRepository->cleanUpWord();
-						$isValid = true;
-					}
-				}
-			}
-		} else {
-			$isValid = empty($word);
-		}
-		if (!$isValid) {
-			// Please enter the word or number as it appears in the image. The entered value was incorrect.
-			$this->addError(
-				$this->translateErrorMessage(
-					'9221561048',
-					'sr_freecap'
-				),
-				9221561048
-			);
-		}
-		return $isValid;
-	}
+    /**
+     * Check the word that was entered against the hashed value
+     * Returns true, if the given property ($word) matches the session captcha value.
+     *
+     * @param string $word: the word that was entered and should be validated
+     * @return bool true, if the word entered matches the hash value, false if an error occured
+     */
+    public function isValid($word)
+    {
+        $isValid = false;
+        // This validator needs a frontend user session
+        if (is_object($GLOBALS ['TSFE']) && isset($GLOBALS ['TSFE']->fe_user)) {
+            // Get session data
+            $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
+            $wordRepository = $objectManager->get(WordRepository::class);
+            $wordObject = $wordRepository->getWord();
+            $wordHash = $wordObject->getWordHash();
+            // Check the word hash against the stored hash value
+            if (!empty($wordHash) && !empty($word)) {
+                if ($wordObject->getHashFunction() == 'md5') {
+                    // All freeCap words are lowercase.
+                    // font #4 looks uppercase, but trust me, it's not...
+                    if (md5(strtolower(utf8_decode($word))) == $wordHash) {
+                        // Reset freeCap session vars
+                        // Cannot stress enough how important it is to do this
+                        // Defeats re-use of known image with spoofed session id
+                        $wordRepository->cleanUpWord();
+                        $isValid = true;
+                    }
+                }
+            }
+        } else {
+            $isValid = empty($word);
+        }
+        if (!$isValid) {
+            // Please enter the word or number as it appears in the image. The entered value was incorrect.
+            $this->addError(
+                $this->translateErrorMessage(
+                    '9221561048',
+                    'sr_freecap'
+                ),
+                9221561048
+            );
+        }
+        return $isValid;
+    }
 }

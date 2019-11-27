@@ -36,68 +36,68 @@ use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 class PiBaseApi
 {
-	/**
-	 * @var string The extension key
-	 */
-	public $extKey = 'sr_freecap';
+    /**
+     * @var string The extension key
+     */
+    public $extKey = 'sr_freecap';
 
-	/**
-	 * @var ObjectManager
-	 */
-	protected $objectManager = null;
+    /**
+     * @var ObjectManager
+     */
+    protected $objectManager = null;
 
-	/**
-	 * This function generates an array of markers used to render the captcha element
-	 *
-	 * @return array marker array containing the captcha markers to be sustituted in the html template
-	 */
-	public function makeCaptcha()
-	{
-		// Get the object manager
-		if ($this->objectManager === null) {
-			$this->objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-		}
+    /**
+     * This function generates an array of markers used to render the captcha element
+     *
+     * @return array marker array containing the captcha markers to be sustituted in the html template
+     */
+    public function makeCaptcha()
+    {
+        // Get the object manager
+        if ($this->objectManager === null) {
+            $this->objectManager = GeneralUtility::makeInstance(ObjectManager::class);
+        }
 
-		// Get the configuration manager
-		$configurationManager = $this->objectManager->get(ConfigurationManagerInterface::class);
+        // Get the configuration manager
+        $configurationManager = $this->objectManager->get(ConfigurationManagerInterface::class);
 
-		// Get translation view helper
-		$translator = $this->objectManager->get(TranslateViewHelper::class);
-		$translator->injectConfigurationManager($configurationManager);
+        // Get translation view helper
+        $translator = $this->objectManager->get(TranslateViewHelper::class);
+        $translator->injectConfigurationManager($configurationManager);
 
-		$markerArray = [];
-		$markerArray['###'. strtoupper($this->extKey) . '_NOTICE###'] = $translator->render('notice') . ' ' . $translator->render('explain');
+        $markerArray = [];
+        $markerArray['###' . strtoupper($this->extKey) . '_NOTICE###'] = $translator->render('notice') . ' ' . $translator->render('explain');
 
-		// Get the captcha image view helper
-		$imageViewHelper = $this->objectManager->get(ImageViewHelper::class);
-		$imageViewHelper->injectConfigurationManager($configurationManager);
-		$markerArray['###'. strtoupper($this->extKey) . '_IMAGE###'] = $imageViewHelper->render('pi1');
-		$markerArray['###'. strtoupper($this->extKey) . '_CANT_READ###'] = '';
+        // Get the captcha image view helper
+        $imageViewHelper = $this->objectManager->get(ImageViewHelper::class);
+        $imageViewHelper->injectConfigurationManager($configurationManager);
+        $markerArray['###' . strtoupper($this->extKey) . '_IMAGE###'] = $imageViewHelper->render('pi1');
+        $markerArray['###' . strtoupper($this->extKey) . '_CANT_READ###'] = '';
 
-		// Get the audio icon view helper
-		$audioViewHelper = $this->objectManager->get(AudioViewHelper::class);
-		$audioViewHelper->injectConfigurationManager($configurationManager);
-		$markerArray['###'. strtoupper($this->extKey) . '_ACCESSIBLE###'] = $audioViewHelper->render('pi1');
+        // Get the audio icon view helper
+        $audioViewHelper = $this->objectManager->get(AudioViewHelper::class);
+        $audioViewHelper->injectConfigurationManager($configurationManager);
+        $markerArray['###' . strtoupper($this->extKey) . '_ACCESSIBLE###'] = $audioViewHelper->render('pi1');
 
-		return $markerArray;
-	}
-	
-	/**
-	 * Check the word that was entered against the hashed value
-	 *
-	 * @param string $word: hte word that was entered
-	 * @return bool true, if the word entered matches the hashes value
-	 */
-	public function checkWord($word)
-	{
-		// Get the object manager
-		if ($this->objectManager === null) {
-			$this->objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-		}
-		// Get the validator
-		$validator = $this->objectManager->get(CaptchaValidator::class);
-		// Check word
-		return !$validator->validate($word)->hasErrors();
-	}
+        return $markerArray;
+    }
+
+    /**
+     * Check the word that was entered against the hashed value
+     *
+     * @param string $word: hte word that was entered
+     * @return bool true, if the word entered matches the hashes value
+     */
+    public function checkWord($word)
+    {
+        // Get the object manager
+        if ($this->objectManager === null) {
+            $this->objectManager = GeneralUtility::makeInstance(ObjectManager::class);
+        }
+        // Get the validator
+        $validator = $this->objectManager->get(CaptchaValidator::class);
+        // Check word
+        return !$validator->validate($word)->hasErrors();
+    }
 }
 class_alias('SJBR\\SrFreecap\\PiBaseApi', 'tx_srfreecap_pi2');

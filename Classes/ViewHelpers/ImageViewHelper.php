@@ -1,4 +1,5 @@
 <?php
+
 namespace SJBR\SrFreecap\ViewHelpers;
 
 /*
@@ -26,7 +27,6 @@ namespace SJBR\SrFreecap\ViewHelpers;
  *  This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use SJBR\SrFreecap\ViewHelpers\TranslateViewHelper;
 use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Session\Backend\Exception\SessionNotFoundException;
@@ -40,111 +40,125 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
 
 class ImageViewHelper extends AbstractTagBasedViewHelper
 {
-	/**
-	 * @var string Name of the extension this view helper belongs to
-	 */
-	protected $extensionName = 'SrFreecap';
+    /**
+     * @var string Name of the extension this view helper belongs to
+     */
+    protected $extensionName = 'SrFreecap';
 
-	/**
-	 * @var string Name of the extension this view helper belongs to
-	 */
-	protected $extensionKey = 'sr_freecap';
+    /**
+     * @var string Name of the extension this view helper belongs to
+     */
+    protected $extensionKey = 'sr_freecap';
 
-	/**
-	 * @var string Name of the plugin this view helper belongs to
-	 */
-	protected $pluginName = 'tx_srfreecap';
+    /**
+     * @var string Name of the plugin this view helper belongs to
+     */
+    protected $pluginName = 'tx_srfreecap';
 
-	/**
-	 * @var ConfigurationManagerInterface
-	 */
-	protected $configurationManager;
+    /**
+     * @var ConfigurationManagerInterface
+     */
+    protected $configurationManager;
 
-	/**
-	 * @param ConfigurationManagerInterface $configurationManager
-	 * @return void
-	 */
-	public function injectConfigurationManager(ConfigurationManagerInterface $configurationManager)
-	{
-		$this->configurationManager = $configurationManager;
-	}
+    /**
+     * @param ConfigurationManagerInterface $configurationManager
+     */
+    public function injectConfigurationManager(ConfigurationManagerInterface $configurationManager)
+    {
+        $this->configurationManager = $configurationManager;
+    }
 
-	public function initializeArguments()
-	{
-		parent::initializeArguments();
-		$this->registerArgument('suffix', 'string', 'Suffix to be appended to the extenstion key when forming css class names', false, '');
-	}
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerArgument(
+            'suffix',
+            'string',
+            'Suffix to be appended to the extenstion key when forming css class names',
+            false,
+            ''
+        );
+    }
 
-	/**
-	 * Render the captcha image html
-	 *
-	 * @param string suffix to be appended to the extenstion key when forming css class names
-	 * @return string The html used to render the captcha image
-	 */
-	public function render($suffix = '')
-	{
-		// This viewhelper needs a frontend user session
-		if (!is_object($this->getTypoScriptFrontendController()) || !isset($this->getTypoScriptFrontendController()->fe_user)) {
-			throw new SessionNotFoundException('No frontend user found in session!');
-		}
+    /**
+     * Render the captcha image html
+     *
+     * @param string suffix to be appended to the extenstion key when forming css class names
+     * @return string The html used to render the captcha image
+     * @throws SessionNotFoundException
+     * @throws \TYPO3\CMS\Core\Context\Exception\AspectNotFoundException
+     */
+    public function render($suffix = '')
+    {
+        // This viewhelper needs a frontend user session
+        if (!is_object($this->getTypoScriptFrontendController()) || !isset($this->getTypoScriptFrontendController()->fe_user)) {
+            throw new SessionNotFoundException('No frontend user found in session!');
+        }
 
-		$value = '';
+        $value = '';
 
-		// Include the required JavaScript
-		$pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
-		$pageRenderer->addJsFooterFile(PathUtility::stripPathSitePrefix(ExtensionManagementUtility::extPath($this->extensionKey)) . 'Resources/Public/JavaScript/freeCap.js');
+        // Include the required JavaScript
+        $pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
+        $pageRenderer->addJsFooterFile(PathUtility::stripPathSitePrefix(ExtensionManagementUtility::extPath($this->extensionKey)) . 'Resources/Public/JavaScript/freeCap.js');
 
-		// Disable caching
-		$this->getTypoScriptFrontendController()->no_cache = 1;
+        // Disable caching
+        $this->getTypoScriptFrontendController()->no_cache = 1;
 
-		// Get the translation view helper
-		$objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-		$translator = $objectManager->get(TranslateViewHelper::class);
+        // Get the translation view helper
+        $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
+        $translator = $objectManager->get(TranslateViewHelper::class);
 
-		// Generate the image url
-		$fakeId = GeneralUtility::shortMD5(uniqid (rand()),5);
-		$siteURL = GeneralUtility::getIndpEnv('TYPO3_SITE_URL');
-		$context = GeneralUtility::makeInstance(Context::class);
-		$languageAspect = $context->getAspect('language');
-		$urlParams = [
-			'eIDSR' => 'sr_freecap_EidDispatcher',
-			'id' => $this->getTypoScriptFrontendController()->id,
-			'vendorName' => 'SJBR',
-			'extensionName' => 'SrFreecap',
-			'pluginName' => 'ImageGenerator',
-			'controllerName' => 'ImageGenerator',
-			'actionName' => 'show',
-			'formatName' => 'png',
-			'L' => $languageAspect->getId()
-		];
-		if ($this->getTypoScriptFrontendController()->MP) {
-			$urlParams['MP'] = $this->getTypoScriptFrontendController()->MP;
-		}
-		$urlParams['set'] = $fakeId;
-		$imageUrl = $siteURL . 'index.php?' . ltrim(GeneralUtility::implodeArrayForUrl('', $urlParams), '&');
+        // Generate the image url
+        $fakeId = GeneralUtility::shortMD5(uniqid(rand()), 5);
+        $siteURL = GeneralUtility::getIndpEnv('TYPO3_SITE_URL');
+        $context = GeneralUtility::makeInstance(Context::class);
+        $languageAspect = $context->getAspect('language');
+        $urlParams = [
+            //'eID' => 'sr_freecap_EidDispatcher',
+            'id' => $this->getTypoScriptFrontendController()->id,
+            //'vendorName' => 'SJBR',
+            //'extensionName' => 'SrFreecap',
+            'pluginName' => 'ImageGenerator',
+            'controllerName' => 'ImageGenerator',
+            'actionName' => 'show',
+            'formatName' => 'png',
+            'L' => $languageAspect->getId()
+        ];
+        if ($this->getTypoScriptFrontendController()->MP) {
+            $urlParams['MP'] = $this->getTypoScriptFrontendController()->MP;
+        }
+        $urlParams['set'] = $fakeId;
+        $imageUrl = $siteURL . 'index.php?' . ltrim(GeneralUtility::implodeArrayForUrl('', $urlParams), '&');
 
-		// Generate the html text
-		$value = '<img' . $this->getClassAttribute('image', $suffix) . ' id="tx_srfreecap_captcha_image_' . $fakeId . '"'
-			. ' src="' . htmlspecialchars($imageUrl) . '"'
-			. ' alt="' . $translator->render('altText') . ' "/>'
-			. '<span' . $this->getClassAttribute('cant-read', $suffix) . '>' . $translator->render('cant_read1')
-			. ' <a href="#" onclick="this.blur();' . $this->extensionName . '.newImage(\'' . $fakeId . '\', \'' . $translator->render('noImageMessage').'\');return false;">'
-			. $translator->render('click_here') . '</a>'
-			. $translator->render('cant_read2') . '</span>';
-		return $value;
-	}
+        // Generate the html text
+        $value = '<img' . $this->getClassAttribute(
+            'image',
+            $suffix
+        ) . ' id="tx_srfreecap_captcha_image_' . $fakeId . '"'
+            . ' src="' . htmlspecialchars($imageUrl) . '"'
+            . ' alt="' . $translator->render('altText') . ' "/>'
+            . '<span' . $this->getClassAttribute('cant-read', $suffix) . '>' . $translator->render('cant_read1')
+            . ' <a href="#" onclick="this.blur();' . $this->extensionName . '.newImage(\'' . $fakeId . '\', \'' . $translator->render('noImageMessage') . '\');return false;">'
+            . $translator->render('click_here') . '</a>'
+            . $translator->render('cant_read2') . '</span>';
+        return $value;
+    }
 
-	/**
-	 * Returns a class attribute with a class-name prefixed with $this->pluginName and with all underscores substituted to dashes (-)
-	 *
-	 * @param string $class The class name (or the END of it since it will be prefixed by $this->pluginName.'-')
-	 * @param string suffix to be appended to the extenstion key when forming css class names
-	 * @return string the class attribute with the combined class name (with the correct prefix)
-	 */
-	protected function getClassAttribute($class, $suffix = '')
-	{
-		return ' class="' . trim(str_replace('_', '-', $this->pluginName) . ($suffix ? '-' . $suffix . '-' : '-') . $class) . '"';
-	}
+    /**
+     * Returns a class attribute with a class-name prefixed with $this->pluginName and with all underscores substituted to dashes (-)
+     *
+     * @param string $class The class name (or the END of it since it will be prefixed by $this->pluginName.'-')
+     * @param string suffix to be appended to the extenstion key when forming css class names
+     * @return string the class attribute with the combined class name (with the correct prefix)
+     */
+    protected function getClassAttribute($class, $suffix = '')
+    {
+        return ' class="' . trim(str_replace(
+            '_',
+            '-',
+            $this->pluginName
+        ) . ($suffix ? '-' . $suffix . '-' : '-') . $class) . '"';
+    }
 
     /**
      * @return TypoScriptFrontendController

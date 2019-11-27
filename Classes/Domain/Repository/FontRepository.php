@@ -1,4 +1,5 @@
 <?php
+
 namespace SJBR\SrFreecap\Domain\Repository;
 
 /*
@@ -38,23 +39,23 @@ use TYPO3\CMS\Extbase\Persistence\Repository;
  */
 class FontRepository extends Repository
 {
-	/**
-	 * @var string Name of the extension this controller belongs to
-	 */
-	protected $extensionKey = 'sr_freecap';
+    /**
+     * @var string Name of the extension this controller belongs to
+     */
+    protected $extensionKey = 'sr_freecap';
 
-	/**
-	 * Writes the GD font file
-	 *
-	 * @param Font the object to be stored
-	 * @return \SJBR\SrFreecap\Domain\Repository\FontRepository $this
-	 */
-	 public function writeFontFile(Font $font)
-	 {
-	 	$relativeFileName = 'uploads/' . ExtensionManagementUtility::getCN($this->extensionKey) . '/' . $font->getGdFontFilePrefix() . '_' .  GeneralUtility::shortMD5($font->getGdFontData()) . '.gdf';
-		if (GeneralUtility::writeFile(Environment::getPublicPath() . '/' . $relativeFileName, $font->getGdFontData())) {
-			$font->setGdFontFileName($relativeFileName);
-		}
-		return $this;
-	}
+    /**
+     * Writes the GD font file
+     *
+     * @param Font the object to be stored
+     * @return \SJBR\SrFreecap\Domain\Repository\FontRepository $this
+     */
+    public function writeFontFile(Font $font)
+    {
+        $relativeFileName = 'uploads/' . ExtensionManagementUtility::getCN($this->extensionKey) . '/' . $font->getGdFontFilePrefix() . '_' . GeneralUtility::shortMD5($font->getGdFontData()) . '.gdf';
+        if (GeneralUtility::writeFile(Environment::getPublicPath() . '/' . $relativeFileName, $font->getGdFontData())) {
+            $font->setGdFontFileName($relativeFileName);
+        }
+        return $this;
+    }
 }

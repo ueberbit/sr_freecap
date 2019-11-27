@@ -1,5 +1,6 @@
 <?php
 namespace SJBR\SrFreecap\Utility;
+
 /***************************************************************
 *  Copyright notice
 *
@@ -31,62 +32,65 @@ namespace SJBR\SrFreecap\Utility;
  *
  * @author	Stanislas Rolland	<typo3(arobas)sjbr.ca>
  */
-class Mp3ContentUtility {
+class Mp3ContentUtility
+{
+    public $content;
 
-	var $content;
+    // Create a new mp3
+    public function __construct($file = '')
+    {
+        if ($file != '') {
+            $this->content = file_get_contents($file);
+        }
+    }
 
-	// Create a new mp3
-	public function __construct($file = '') {
-		if ($file != '') {
-			$this->content = file_get_contents($file);
-		}
-	}
+    // Get the mp3 content
+    public function getContent()
+    {
+        return $this->content;
+    }
 
-	// Get the mp3 content
-	public function getContent() {
-		return $this->content;
-	}
+    // Calculate where's the beginning of the sound file
+    protected function getStart()
+    {
+        $strlen = strlen($this->content);
+        for ($i=0; $i < $strlen; $i++) {
+            $v = substr($this->content, $i, 1);
+            $value = ord($v);
+            if ($value == 255) {
+                return $i;
+            }
+        }
+    }
 
-	// Calculate where's the beginning of the sound file
-	protected function getStart() {
-		$strlen = strlen($this->content);
-		for ($i=0; $i < $strlen; $i++) {
-			$v = substr($this->content, $i, 1);
-			$value = ord($v);
-			if ($value == 255) {
-				return $i;
-			}
-		}
-	}
+    // Calculate where's the end of the sound file
+    protected function getIdvEnd()
+    {
+        $strlen = strlen($this->content);
+        $str = substr($this->content, ($strlen - 128));
+        $str1 = substr($str, 0, 3);
+        if (strtolower($str1) == strtolower('TAG')) {
+            return $str;
+        }
+        return false;
+    }
 
-	// Calculate where's the end of the sound file 
-	protected function getIdvEnd() {
-		$strlen = strlen($this->content);
-		$str = substr($this->content, ($strlen - 128));
-		$str1 = substr($str, 0, 3);
-		if (strtolower($str1) == strtolower('TAG')) {
-			return $str;
-		} else {
-			return FALSE;
-		}
-	}
+    // Remove the ID3 tags
+    public function striptags()
+    {
+        // Remove start stuff...
+        $newStr = '';
+        $s = $start = $this->getStart();
+        if ($s === false) {
+            return false;
+        }
+        $this->content = substr($this->content, $start);
 
-	// Remove the ID3 tags 
-	public function striptags() {
-		// Remove start stuff... 
-		$newStr = '';
-		$s = $start = $this->getStart();
-		if ($s === FALSE) {
-			return FALSE;
-		} else {
-			$this->content = substr($this->content, $start);
-		}
-		//Remove end tag stuff
-		$end = $this->getIdvEnd();
-		if ($end !== FALSE) {
-			$this->content = substr($this->content, 0, (strlen($this->content)-129));
-		}
-		return $this->content;
-	}
+        //Remove end tag stuff
+        $end = $this->getIdvEnd();
+        if ($end !== false) {
+            $this->content = substr($this->content, 0, (strlen($this->content)-129));
+        }
+        return $this->content;
+    }
 }
-?>

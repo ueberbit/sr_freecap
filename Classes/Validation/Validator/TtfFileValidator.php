@@ -1,4 +1,5 @@
 <?php
+
 namespace SJBR\SrFreecap\Validation\Validator;
 
 /***************************************************************
@@ -29,48 +30,47 @@ use TYPO3\CMS\Extbase\Validation\Validator\AbstractValidator;
 
 /**
  * Validator for True Type Font file existence
- *
  */
 class TtfFileValidator extends AbstractValidator
 {
-	/**
-	 * Returns true, if the given property ($propertyValue) is a valid number in the given range.
-	 *
-	 * If at least one error occurred, the result is false.
-	 *
-	 * @param mixed $value The value that should be validated
-	 * @return boolean true if the value is within the range, otherwise false
-	 */
-	protected function isValid($value)
-	{
-		$isValid = true;
-		$absoluteFileName = GeneralUtility::getFileAbsFileName($value);
-		// Check file existence
-		if (!is_file($absoluteFileName)) {
-			// A file with the given name could not be found.
-			$this->addError(
-				$this->translateErrorMessage(
-					'9221561046',
-					'sr_freecap'
-				),
-				9221561046
-			);
-			$isValid = false;
-		} else {
-			// Check file extension
-			$pathInfo = pathinfo($absoluteFileName);
-			if (strtolower($pathInfo['extension']) !== 'ttf') {
-				// The specified file is not a True Type Font file.
-				$this->addError(
-					$this->translateErrorMessage(
-						'9221561047',
-						'sr_freecap'
-					),
-					9221561046
-				);
-				$isValid = false;
-			}
-		}
-		return $isValid;
-	}
+    /**
+     * Returns true, if the given property ($propertyValue) is a valid number in the given range.
+     *
+     * If at least one error occurred, the result is false.
+     *
+     * @param mixed $value The value that should be validated
+     * @return bool true if the value is within the range, otherwise false
+     */
+    protected function isValid($value)
+    {
+        $isValid = true;
+        $absoluteFileName = GeneralUtility::getFileAbsFileName($value);
+        // Check file existence
+        if (!is_file($absoluteFileName)) {
+            // A file with the given name could not be found.
+            $this->addError(
+                $this->translateErrorMessage(
+                    '9221561046',
+                    'sr_freecap'
+                ),
+                9221561046
+            );
+            $isValid = false;
+        } else {
+            // Check file extension
+            $pathInfo = pathinfo($absoluteFileName);
+            if (strtolower($pathInfo['extension']) !== 'ttf') {
+                // The specified file is not a True Type Font file.
+                $this->addError(
+                    $this->translateErrorMessage(
+                        '9221561047',
+                        'sr_freecap'
+                    ),
+                    9221561046
+                );
+                $isValid = false;
+            }
+        }
+        return $isValid;
+    }
 }

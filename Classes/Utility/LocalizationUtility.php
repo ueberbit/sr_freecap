@@ -26,7 +26,6 @@ namespace SJBR\SrFreecap\Utility;
  */
 
 use Psr\Http\Message\ServerRequestInterface;
-use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Localization\Locales;
 use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
@@ -36,72 +35,71 @@ use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 /**
  * Localization helper which should be used to fetch appropriate words list or voice rendering language
- *
  */
 class LocalizationUtility
 {
-	/**
-	 * Key of the extension to which this class belongs
-	 *
-	 * @var string
-	 */
-	protected static $extensionKey = 'sr_freecap';
+    /**
+     * Key of the extension to which this class belongs
+     *
+     * @var string
+     */
+    protected static $extensionKey = 'sr_freecap';
 
-	/**
-	 * Gets the location of the words list based on configured language
-	 *
-	 * @param string $defaultWordsList: location of the default words list
-	 * @return string the location of the words list to be used
-	 */
-	public static function getWordsListLocation($defaultWordsList = '')
-	{
-		$languageKeys = static::getLanguageKeys();
-		$initialWordsList = $defaultWordsList;
-		if (!trim($initialWordsList)) {
-			$initialWordsList = 'EXT:' . self::$extensionKey . '/Resources/Private/Captcha/Words/default_freecap_words';
-		}
-		$path = dirname(GeneralUtility::getFileAbsFileName($initialWordsList)) . '/';
-		$wordsListLocation = $path . $languageKeys['languageKey'] . '_freecap_words';
-		if (!is_file($wordsListLocation)) {
-			foreach ($languageKeys['alternativeLanguageKeys'] as $language) {
-				$wordsListLocation = $path . $language . '_freecap_words';
-				if (is_file($wordsListLocation)) {
-					break;
-				}
-			}
-		}
-		if (!is_file($wordsListLocation)) {
-			$wordsListLocation = $path . 'default_freecap_words';
-			if (!is_file($wordsListLocation)) {
-				$wordsListLocation = '';
-			}
-		}
-		return $wordsListLocation;
-	}
+    /**
+     * Gets the location of the words list based on configured language
+     *
+     * @param string $defaultWordsList: location of the default words list
+     * @return string the location of the words list to be used
+     */
+    public static function getWordsListLocation($defaultWordsList = '')
+    {
+        $languageKeys = static::getLanguageKeys();
+        $initialWordsList = $defaultWordsList;
+        if (!trim($initialWordsList)) {
+            $initialWordsList = 'EXT:' . self::$extensionKey . '/Resources/Private/Captcha/Words/default_freecap_words';
+        }
+        $path = dirname(GeneralUtility::getFileAbsFileName($initialWordsList)) . '/';
+        $wordsListLocation = $path . $languageKeys['languageKey'] . '_freecap_words';
+        if (!is_file($wordsListLocation)) {
+            foreach ($languageKeys['alternativeLanguageKeys'] as $language) {
+                $wordsListLocation = $path . $language . '_freecap_words';
+                if (is_file($wordsListLocation)) {
+                    break;
+                }
+            }
+        }
+        if (!is_file($wordsListLocation)) {
+            $wordsListLocation = $path . 'default_freecap_words';
+            if (!is_file($wordsListLocation)) {
+                $wordsListLocation = '';
+            }
+        }
+        return $wordsListLocation;
+    }
 
-	/**
-	 * Gets the directory of wav files based on configured language
-	 *
-	 * @return string name of the directory containing the wav files to be used
-	 */
-	public static function getVoicesDirectory()
-	{
-		$languageKeys = static::getLanguageKeys();
-		$path = ExtensionManagementUtility::extPath(self::$extensionKey) . 'Resources/Private/Captcha/Voices/';
-		$voicesDirectory = $path . $languageKeys['languageKey'] . '/';
-		if (!is_dir($voicesDirectory)) {
-			foreach ($languageKeys['alternativeLanguageKeys'] as $language) {
-				$voicesDirectory = $path . $language . '/';
-				if (is_dir($voicesDirectory)) {
-					break;
-				}
-			}
-		}
-		if (!is_dir($voicesDirectory)) {
-			$voicesDirectory = $path . 'default/';
-		}
-		return $voicesDirectory;
-	}
+    /**
+     * Gets the directory of wav files based on configured language
+     *
+     * @return string name of the directory containing the wav files to be used
+     */
+    public static function getVoicesDirectory()
+    {
+        $languageKeys = static::getLanguageKeys();
+        $path = ExtensionManagementUtility::extPath(self::$extensionKey) . 'Resources/Private/Captcha/Voices/';
+        $voicesDirectory = $path . $languageKeys['languageKey'] . '/';
+        if (!is_dir($voicesDirectory)) {
+            foreach ($languageKeys['alternativeLanguageKeys'] as $language) {
+                $voicesDirectory = $path . $language . '/';
+                if (is_dir($voicesDirectory)) {
+                    break;
+                }
+            }
+        }
+        if (!is_dir($voicesDirectory)) {
+            $voicesDirectory = $path . 'default/';
+        }
+        return $voicesDirectory;
+    }
 
     /**
      * Sets the currently active language/language_alt keys.

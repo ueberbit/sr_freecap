@@ -1,4 +1,5 @@
 <?php
+
 namespace SJBR\SrFreecap\Controller;
 
 /*
@@ -35,35 +36,33 @@ use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
  */
 class AudioPlayerController extends ActionController
 {
-	/**
-	 * @var string Name of the extension this controller belongs to
-	 */
-	protected $extensionName = 'SrFreecap';
+    /**
+     * @var string Name of the extension this controller belongs to
+     */
+    protected $extensionName = 'SrFreecap';
 
-	/**
-	 * @var WordRepository
-	 */
-	protected $wordRepository;
+    /**
+     * @var WordRepository
+     */
+    protected $wordRepository;
 
-	/**
-	 * Initialize any action
-	 *
-	 * @return void
-	 */
-	protected function initializeAction()
-	{
-		// Get an instance of the word repository
-		$this->wordRepository = $this->objectManager->get(WordRepository::class);
-	}
+    /**
+     * Initialize any action
+     */
+    protected function initializeAction()
+    {
+        // Get an instance of the word repository
+        $this->wordRepository = $this->objectManager->get(WordRepository::class);
+    }
 
-	/**
-	 * Play the audio catcha
-	 *
-	 * @return string Audio content to be sent to the client
-	 */
-	public function playAction()
-	{
-		$word = $this->wordRepository->getWord();
-		$this->view->assign('word', $word);
-	}
+    /**
+     * Play the audio catcha
+     *
+     * @return string Audio content to be sent to the client
+     */
+    public function playAction()
+    {
+        $word = $this->wordRepository->getWord();
+        $this->view->assign('word', $word);
+    }
 }

@@ -1,5 +1,6 @@
 <?php
-declare(encoding='ISO-8859-2');
+declare(encoding = 'ISO-8859-2');
+
 namespace SJBR\SrFreecap\Domain\Model;
 
 /*
@@ -29,7 +30,6 @@ namespace SJBR\SrFreecap\Domain\Model;
  */
 
 use SJBR\SrFreecap\Utility\FontMakingUtility;
-use SJBR\SrFreecap\Validation\Validator\TtfFileValidator;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Extbase\Annotation\Validate;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
@@ -38,195 +38,223 @@ use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
  * Font object
  *
  * This file must be iso-8859-2-encoded!
- *
  */
 class Font extends AbstractEntity
 {
-	/**
-	 * @var int
-	 */
-	protected $charactersIncludedInFont;
+    /**
+     * @var int
+     */
+    protected $charactersIncludedInFont;
 
-	/**
-	 * @var int
-	 * @Validate("NumberRange", options={"minimum": 5, "maximum": 255})
-	 */
-	protected $characterWidth;
+    /**
+     * @var int
+     * @Validate("NumberRange", options={"minimum": 5, "maximum": 255})
+     */
+    protected $characterWidth;
 
-	/**
-	 * @var int
-	 * @Validate("NumberRange", options={"minimum": 5, "maximum": 255})
-	 */
-	protected $characterHeight;
+    /**
+     * @var int
+     * @Validate("NumberRange", options={"minimum": 5, "maximum": 255})
+     */
+    protected $characterHeight;
 
-	/**
-	 * @var int
-	 **/
-	protected $endianness;
+    /**
+     * @var int
+     **/
+    protected $endianness;
 
-	/**
-	 * @var string
-	 * @Validate("NotEmpty")
-	 * @Validate("StringLength", options={"minimum": 1, "maximum": 255})
-	 * @Validate("\SJBR\SrFreecap\Validation\Validator\TtfFileValidator")
-	 **/
-	protected $ttfFontFileName = '';
+    /**
+     * @var string
+     * @Validate("NotEmpty")
+     * @Validate("StringLength", options={"minimum": 1, "maximum": 255})
+     * @Validate("\SJBR\SrFreecap\Validation\Validator\TtfFileValidator")
+     **/
+    protected $ttfFontFileName = '';
 
-	/**
-	 * @var string
-	 **/
-	protected $gdFontFilePrefix = 'font';
+    /**
+     * @var string
+     **/
+    protected $gdFontFilePrefix = 'font';
 
-	/**
-	 * @var string
-	 **/
-	protected $pngImageFileName = '';
+    /**
+     * @var string
+     **/
+    protected $pngImageFileName = '';
 
-	/**
-	 * @var string
-	 **/
-	protected $gdFontData = '';
+    /**
+     * @var string
+     **/
+    protected $gdFontData = '';
 
-	/**
-	 * @var string
-	 **/
-	protected $gdFontFileName = '';
+    /**
+     * @var string
+     **/
+    protected $gdFontFileName = '';
 
-	public function __construct(
-			$charactersIncludedInFont = 0,
-			$characterWidth = 34,
-			$characterHeight = 50,
-			$endianness = 0,
-			$ttfFontFileName = '',
-			$gdFontFilePrefix = '',
-			$pngImageFileName = '',
-			$gdFontData = '',
-			$gdFontFileName = ''
-		) {
-		$this->setCharactersIncludedInFont($charactersIncludedInFont);
-		$this->setCharacterWidth($characterWidth);
-		$this->setCharacterHeight($characterHeight);
-		$this->setEndianness($endianness);
-		$this->setTtfFontFileName($ttfFontFileName);
-		$this->setGdFontFilePrefix($gdFontFilePrefix);
-		$this->setPngImageFileName($pngImageFileName);
-		$this->setGdFontData($gdFontData);
-		$this->setGdFontFileName($gdFontFileName);
-	}
+    public function __construct(
+        $charactersIncludedInFont = 0,
+        $characterWidth = 34,
+        $characterHeight = 50,
+        $endianness = 0,
+        $ttfFontFileName = '',
+        $gdFontFilePrefix = '',
+        $pngImageFileName = '',
+        $gdFontData = '',
+        $gdFontFileName = ''
+    ) {
+        $this->setCharactersIncludedInFont($charactersIncludedInFont);
+        $this->setCharacterWidth($characterWidth);
+        $this->setCharacterHeight($characterHeight);
+        $this->setEndianness($endianness);
+        $this->setTtfFontFileName($ttfFontFileName);
+        $this->setGdFontFilePrefix($gdFontFilePrefix);
+        $this->setPngImageFileName($pngImageFileName);
+        $this->setGdFontData($gdFontData);
+        $this->setGdFontFileName($gdFontFileName);
+    }
 
-	public function setCharactersIncludedInFont($charactersIncludedInFont) {
-		$this->charactersIncludedInFont = (int)$charactersIncludedInFont;
-	}
+    public function setCharactersIncludedInFont($charactersIncludedInFont)
+    {
+        $this->charactersIncludedInFont = (int)$charactersIncludedInFont;
+    }
 
-	public function getCharactersIncludedInFont() {
-		return $this->charactersIncludedInFont;
-	}
-                                                                                                    
-	public function setCharacterWidth($characterWidth) {
-		$this->characterWidth = (int)$characterWidth;
-	}
-                                                                                                                   
-	public function getCharacterWidth() {
-		return $this->characterWidth;
-	}
+    public function getCharactersIncludedInFont()
+    {
+        return $this->charactersIncludedInFont;
+    }
 
-	public function setCharacterHeight($characterHeight) {                                      
-		$this->characterHeight = (int)$characterHeight;
-	}
+    public function setCharacterWidth($characterWidth)
+    {
+        $this->characterWidth = (int)$characterWidth;
+    }
 
-	public function getCharacterHeight() {                                                   
-		return $this->characterHeight;
-	}
+    public function getCharacterWidth()
+    {
+        return $this->characterWidth;
+    }
 
-	public function setEndianness($endianness) {
-		$this->endianness = (int)$endianness;
-	}
+    public function setCharacterHeight($characterHeight)
+    {
+        $this->characterHeight = (int)$characterHeight;
+    }
 
-	public function getEndianness() {
-		return $this->endianness;
-	}
+    public function getCharacterHeight()
+    {
+        return $this->characterHeight;
+    }
 
-	public function setTtfFontFileName($ttfFontFileName) {
-		$this->ttfFontFileName = (string)$ttfFontFileName;
-	}
+    public function setEndianness($endianness)
+    {
+        $this->endianness = (int)$endianness;
+    }
 
-	public function getTtfFontFileName() {
-		return $this->ttfFontFileName;
-	}
+    public function getEndianness()
+    {
+        return $this->endianness;
+    }
 
-	public function setGdFontFilePrefix($gdFontFilePrefix = 'font') {
-		$this->gdFontFilePrefix = (string)$gdFontFilePrefix;
-	}
+    public function setTtfFontFileName($ttfFontFileName)
+    {
+        $this->ttfFontFileName = (string)$ttfFontFileName;
+    }
 
-	public function getGdFontFilePrefix() {
-		return $this->gdFontFilePrefix;
-	}
+    public function getTtfFontFileName()
+    {
+        return $this->ttfFontFileName;
+    }
 
+    public function setGdFontFilePrefix($gdFontFilePrefix = 'font')
+    {
+        $this->gdFontFilePrefix = (string)$gdFontFilePrefix;
+    }
 
-	public function setPngImageFileName($pngImageFileName) {
-		$this->pngImageFileName = (string)$pngImageFileName;		
-	}
+    public function getGdFontFilePrefix()
+    {
+        return $this->gdFontFilePrefix;
+    }
 
-	public function getPngImageFileName() {
-		return $this->pngImageFileName;
-	}
+    public function setPngImageFileName($pngImageFileName)
+    {
+        $this->pngImageFileName = (string)$pngImageFileName;
+    }
 
-	public function setGdFontData($gdFontData) {
-		$this->gdFontData = (string)$gdFontData;
-	}
+    public function getPngImageFileName()
+    {
+        return $this->pngImageFileName;
+    }
 
-	public function getGdFontdata() {
-		return $this->gdFontData;
-	}
+    public function setGdFontData($gdFontData)
+    {
+        $this->gdFontData = (string)$gdFontData;
+    }
 
-	public function setGdFontFileName($gdFontFileName) {
-		$this->gdFontFileName = (string)$gdFontFileName;
-	}
+    public function getGdFontdata()
+    {
+        return $this->gdFontData;
+    }
 
-	public function getGdFontFileName() {
-		return $this->gdFontFileName;
-	}
+    public function setGdFontFileName($gdFontFileName)
+    {
+        $this->gdFontFileName = (string)$gdFontFileName;
+    }
 
-	/**
-	 * Creates teh GD font file
-	 */
-	public function createGdFontFile()
-	{
-		switch ($this->charactersIncludedInFont) {
-			case 1:
-				$characters = 'a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z';
-				$startCharacter = 'a';
-				break;
-			case 2:
-				// Note: This script must be iso-8859-2-encoded
-				$characters = 'a,b,c,d,e,f,g,h,i,j,k,l,m,n,o'
-					.',p,q,r,s,t,u,v,w,x,y,z,-,-,-,-,-'
-					.',-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-'
-					.',-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-'
-					.',-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-'
-					.',-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-'
-					.',-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-'
-					.',-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,�'
-					.',�,�,�,�,�,�,�,�,�,�,�,�,�,�,�,�'
-					.',�,�,�,�,�,�,�,-,�,�,�,�,�,�,�,�';
-				$startCharacter = 'a';
-				break;
-			case 0:
-			default:
-				$characters = '0,1,2,3,4,5,6,7,8,9';
-				$startCharacter = '0';
-				break;
-		}
-		$numberOfCharacters = count(explode(',', $characters));
-		$this->setPngImageFileName(FontMakingUtility::makeFontImage($characters, $this->ttfFontFileName, $this->characterWidth, $this->characterHeight));
-		if ($GLOBALS['TYPO3_CONF_VARS']['GFX']['gdlib_png']) {
-			$image = @ImageCreateFromPNG(Environment::getPublicPath() . '/' . $this->pngImageFileName);
-		} else {
-			$image = @ImageCreateFromGIF(Environment::getPublicPath() . '/' . $this->pngImageFileName);
-		}
-		if ($image !== false) {
-			$this->setGdFontdata(FontMakingUtility::makeFont($image, $numberOfCharacters, $startCharacter, $this->characterWidth, $this->characterHeight, $this->endianness));
-			ImageDestroy($image);
-		}
-	}
+    public function getGdFontFileName()
+    {
+        return $this->gdFontFileName;
+    }
+
+    /**
+     * Creates teh GD font file
+     */
+    public function createGdFontFile()
+    {
+        switch ($this->charactersIncludedInFont) {
+            case 1:
+                $characters = 'a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z';
+                $startCharacter = 'a';
+                break;
+            case 2:
+                // Note: This script must be iso-8859-2-encoded
+                $characters = 'a,b,c,d,e,f,g,h,i,j,k,l,m,n,o'
+                    . ',p,q,r,s,t,u,v,w,x,y,z,-,-,-,-,-'
+                    . ',-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-'
+                    . ',-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-'
+                    . ',-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-'
+                    . ',-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-'
+                    . ',-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-'
+                    . ',-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,ďż˝'
+                    . ',ďż˝,ďż˝,ďż˝,ďż˝,ďż˝,ďż˝,ďż˝,ďż˝,ďż˝,ďż˝,ďż˝,ďż˝,ďż˝,ďż˝,ďż˝,ďż˝'
+                    . ',ďż˝,ďż˝,ďż˝,ďż˝,ďż˝,ďż˝,ďż˝,-,ďż˝,ďż˝,ďż˝,ďż˝,ďż˝,ďż˝,ďż˝,ďż˝';
+                $startCharacter = 'a';
+                break;
+            case 0:
+            default:
+                $characters = '0,1,2,3,4,5,6,7,8,9';
+                $startCharacter = '0';
+                break;
+        }
+        $numberOfCharacters = count(explode(',', $characters));
+        $this->setPngImageFileName(FontMakingUtility::makeFontImage(
+            $characters,
+            $this->ttfFontFileName,
+            $this->characterWidth,
+            $this->characterHeight
+        ));
+        if ($GLOBALS['TYPO3_CONF_VARS']['GFX']['gdlib_png']) {
+            $image = @imagecreatefrompng(Environment::getPublicPath() . '/' . $this->pngImageFileName);
+        } else {
+            $image = @imagecreatefromgif(Environment::getPublicPath() . '/' . $this->pngImageFileName);
+        }
+        if ($image !== false) {
+            $this->setGdFontdata(FontMakingUtility::makeFont(
+                $image,
+                $numberOfCharacters,
+                $startCharacter,
+                $this->characterWidth,
+                $this->characterHeight,
+                $this->endianness
+            ));
+            imagedestroy($image);
+        }
+    }
 }

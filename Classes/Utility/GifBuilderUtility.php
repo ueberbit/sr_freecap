@@ -37,30 +37,30 @@ use TYPO3\CMS\Frontend\Imaging\GifBuilder;
  */
 class GifBuilderUtility extends GifBuilder
 {
-	/**
-	 * Returns the reference to a "resource" in TypoScript.
-	 *
-	 * @param string The resource value.
-	 * @return string Returns the relative filepath
-	 */
-	public function checkFile($file)
-	{
-		$file = GeneralUtility::getFileAbsFileName(Environment::getPublicPath() . '/' . $file);
+    /**
+     * Returns the reference to a "resource" in TypoScript.
+     *
+     * @param string The resource value.
+     * @return string Returns the relative filepath
+     */
+    public function checkFile($file)
+    {
+        $file = GeneralUtility::getFileAbsFileName(Environment::getPublicPath() . '/' . $file);
         $file = PathUtility::stripPathSitePrefix($file);
-		return $file;
-	}
+        return $file;
+    }
 
-	/**
-	 * Writes the input GDlib image pointer to file
-	 *
-	 * @param resource The GDlib image resource pointer
-	 * @param string The filename to write to
-	 * @param int $quality The image quality (for JPEGs)
-	 * @return mixed The output of either imageGif, imagePng or imageJpeg based on the filename to write
-	 * @see maskImageOntoImage(), scale(), output()
-	 */
-	public function ImageWrite($destImg, $theImage, $quality = 0)
-	{
-		return parent::ImageWrite($destImg, Environment::getPublicPath() . '/' . $theImage, $quality);
- 	}
+    /**
+     * Writes the input GDlib image pointer to file
+     *
+     * @param resource The GDlib image resource pointer
+     * @param string The filename to write to
+     * @param int $quality The image quality (for JPEGs)
+     * @return mixed The output of either imageGif, imagePng or imageJpeg based on the filename to write
+     * @see maskImageOntoImage(), scale(), output()
+     */
+    public function ImageWrite($destImg, $theImage, $quality = 0)
+    {
+        return parent::ImageWrite($destImg, Environment::getPublicPath() . '/' . $theImage, $quality);
+    }
 }

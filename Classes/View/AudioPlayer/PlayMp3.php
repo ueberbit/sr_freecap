@@ -1,4 +1,5 @@
 <?php
+
 namespace SJBR\SrFreecap\View\AudioPlayer;
 
 /*
@@ -34,24 +35,24 @@ use SJBR\SrFreecap\Utility\AudioContentUtility;
  */
 class PlayMp3 extends AbstractPlayFormat
 {
-	/**
-	 * Renders the audio version of captcha
-	 *
-	 * @return string The audio output to play
-	 */
-	 public function render()
-	 {
-	 	 // Get the catcha word
-		$word = $this->getWord();
-		// Get the letter rensering files
-		$letterRenderingFiles = $this->getLetterRenderingFiles($word, 'mp3');
-		// Join the files
-		$audioContent = AudioContentUtility::joinAudioFiles($letterRenderingFiles, 'mp3');
-		// Output proper headers
-		$this->sendHeaders($audioContent, 'mpeg');
-		// Send audio content
-		$this->sendAudioContent($audioContent);
-		// Return the audio content
-		return $audioContent;
-	}
+    /**
+     * Renders the audio version of captcha
+     *
+     * @return string The audio output to play
+     */
+    public function render()
+    {
+        // Get the catcha word
+        $word = $this->getWord();
+        // Get the letter rensering files
+        $letterRenderingFiles = $this->getLetterRenderingFiles($word, 'mp3');
+        // Join the files
+        $audioContent = AudioContentUtility::joinAudioFiles($letterRenderingFiles, 'mp3');
+        // Output proper headers
+        $this->sendHeaders($audioContent, 'mpeg');
+        // Send audio content
+        $this->sendAudioContent($audioContent);
+        // Return the audio content
+        return $audioContent;
+    }
 }

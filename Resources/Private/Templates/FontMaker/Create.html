@@ -1,27 +1,30 @@
-<f:layout name="Default" />
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+<f:layout name="Default"/>
 
 <f:section name="Content">
-	<h2>{f:translate(key: 'title-created')}</h2>
-	<fieldset class="sjbr-freecap-font-maker-created">
-		<dl>
-			<dt>
-				<label>{f:translate(key: 'usingFontFile')}</label>
-			</dt>
-			<dd>
-				<strong>{font.ttfFontFileName}</strong>
-			</dd>
-			<dt>
-				<label for="sjbr-freecap-font-maker-characterWidth">{f:translate(key: 'pngImageCreated')}</label>
-			</dt>
-			<dd>
-				<img src="../{font.pngImageFileName}" alt="{f:translate(key: 'pngFontImage')}" />
-			</dd>
-			<dt>
-				<label for="sjbr-freecap-font-maker-characterHeight">{f:translate(key: 'gdFontFileCreated')}</label>
-			</dt>
-			<dd>
-				<strong>{font.gdFontFileName}</strong>
-			</dd>
-		</dl>
-	</fieldset>
+    <h2>{f:translate(key: 'title-created')}</h2>
+    <fieldset class="sjbr-freecap-font-maker-created">
+        <dl>
+            <dt>
+                <label>{f:translate(key: 'usingFontFile')}</label>
+            </dt>
+            <dd>
+                <strong>{font.ttfFontFileName}</strong>
+            </dd>
+            <dt>
+                <label for="sjbr-freecap-font-maker-characterWidth">{f:translate(key: 'pngImageCreated')}</label>
+            </dt>
+            <dd>
+                <img src="../{font.pngImageFileName}" alt="{f:translate(key: 'pngFontImage')}"/>
+            </dd>
+            <dt>
+                <label for="sjbr-freecap-font-maker-characterHeight">{f:translate(key: 'gdFontFileCreated')}</label>
+            </dt>
+            <dd>
+                <strong>{font.gdFontFileName}</strong>
+            </dd>
+        </dl>
+    </fieldset>
 </f:section>

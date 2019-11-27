@@ -1,4 +1,5 @@
 <?php
+
 namespace SJBR\SrFreecap\Domain\Repository;
 
 /*
@@ -32,64 +33,64 @@ namespace SJBR\SrFreecap\Domain\Repository;
  */
 class WordRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
 {
- 
-	/**
-	 * The session sorage handler
-	 * @var \SJBR\SrFreecap\Domain\Session\SessionStorage
-	 */
-	protected $sessionStorage = NULL;
 
-	/**
-	 * Constructor
-	 *
-	 * @param \TYPO3\CMS\Extbase\Object\ObjectManagerInterface $objectManager
-	 */
-	public function __construct(\TYPO3\CMS\Extbase\Object\ObjectManagerInterface $objectManager = NULL)
-	{
-		// Get the object manager
-		if ($objectManager === NULL) {
-			$objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
-		}
-		parent::__construct($objectManager);
-		// Get an instance of the session storage handler
-		$this->sessionStorage = $this->objectManager->get('SJBR\\SrFreecap\\Domain\\Session\\SessionStorage');
-	}
- 
-	/**
-	 * Returns the object stored in the user's PHP session
-	 *
-	 * @return \SJBR\SrFreecap\Domain\Model\Word the stored object
-	 */
-	public function getWord()
-	{
-		$word = $this->sessionStorage->restoreFromSession();
-		// If no Word object is found in session data, initialize a new one
-		if (!is_object($word)) {
-			$word = $this->objectManager->get('SJBR\\SrFreecap\\Domain\\Model\\Word');
-		}
-		return $word;
-	}
- 
-	/**
-	 * Writes the object into the PHP session
-	 *
-	 * @param \SJBR\SrFreecap\Domain\Model\Word the object to be stored
-	 * @return \SJBR\SrFreecap\Domain\Repository\WordRepository
-	 */
-	public function setWord(\SJBR\SrFreecap\Domain\Model\Word $object)
-	{
-		$this->sessionStorage->writeToSession($object);
-		return $this;
-	}
- 
-	/**
-	 * Cleans up the session: removes the stored object from the PHP session
-	 *
-	 * @return \SJBR\SrFreecap\Domain\Repository\WordRepository
-	 */
-	public function cleanUpWord()
-	{
-		$this->sessionStorage->cleanUpSession();
-		return $this;
-	}
+    /**
+     * The session sorage handler
+     * @var \SJBR\SrFreecap\Domain\Session\SessionStorage
+     */
+    protected $sessionStorage = null;
+
+    /**
+     * Constructor
+     *
+     * @param \TYPO3\CMS\Extbase\Object\ObjectManagerInterface $objectManager
+     */
+    public function __construct(\TYPO3\CMS\Extbase\Object\ObjectManagerInterface $objectManager = null)
+    {
+        // Get the object manager
+        if ($objectManager === null) {
+            $objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
+        }
+        parent::__construct($objectManager);
+        // Get an instance of the session storage handler
+        $this->sessionStorage = $this->objectManager->get('SJBR\\SrFreecap\\Domain\\Session\\SessionStorage');
+    }
+
+    /**
+     * Returns the object stored in the user's PHP session
+     *
+     * @return \SJBR\SrFreecap\Domain\Model\Word the stored object
+     */
+    public function getWord()
+    {
+        $word = $this->sessionStorage->restoreFromSession();
+        // If no Word object is found in session data, initialize a new one
+        if (!is_object($word)) {
+            $word = $this->objectManager->get('SJBR\\SrFreecap\\Domain\\Model\\Word');
+        }
+        return $word;
+    }
+
+    /**
+     * Writes the object into the PHP session
+     *
+     * @param \SJBR\SrFreecap\Domain\Model\Word the object to be stored
+     * @return \SJBR\SrFreecap\Domain\Repository\WordRepository
+     */
+    public function setWord(\SJBR\SrFreecap\Domain\Model\Word $object)
+    {
+        $this->sessionStorage->writeToSession($object);
+        return $this;
+    }
+
+    /**
+     * Cleans up the session: removes the stored object from the PHP session
+     *
+     * @return \SJBR\SrFreecap\Domain\Repository\WordRepository
+     */
+    public function cleanUpWord()
+    {
+        $this->sessionStorage->cleanUpSession();
+        return $this;
+    }
 }

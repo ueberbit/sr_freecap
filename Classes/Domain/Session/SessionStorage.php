@@ -1,4 +1,5 @@
 <?php
+
 namespace SJBR\SrFreecap\Domain\Session;
 
 /*
@@ -36,55 +37,57 @@ use TYPO3\CMS\Core\Session\Backend\Exception\SessionNotFoundException;
  */
 class SessionStorage implements \TYPO3\CMS\Core\SingletonInterface
 {
-	
-	const SESSIONNAMESPACE = 'tx_srfreecap';
- 
-	/**
-	 * Returns the object stored in the user's PHP session
-	 *
-	 * @return Object the stored object
-	 */
-	public function restoreFromSession()
-	{
-		$sessionData = $this->getFrontendUser()->getKey('ses', self::SESSIONNAMESPACE);
-		return unserialize($sessionData);
-	}
- 
-	/**
-	 * Writes an object into the PHP session
-	 *
-	 * @param $object any serializable object to store into the session
-	 * @return \SJBR\SrFreecap\Domain\Session\SessionStorage
-	 */
-	public function writeToSession($object)
-	{
-		$sessionData = serialize($object);
-		$this->getFrontendUser()->setKey('ses', self::SESSIONNAMESPACE, $sessionData);
-		return $this;
-	}
- 
-	/**
-	 * Cleans up the session: removes the stored object from the PHP session
-	 *
-	 * @return \SJBR\SrFreecap\Domain\Session\SessionStorage
-	 */
-	public function cleanUpSession()
-	{
-		$this->getFrontendUser()->setKey('ses', self::SESSIONNAMESPACE, NULL);
-		return $this;
-	}
+    const SESSIONNAMESPACE = 'tx_srfreecap';
 
-	/**
-	 * Gets a frontend user from TSFE->fe_user
-	 *
-	 * @return	\TYPO3\CMS\Frontend\Authentication\FrontendUserAuthtenication	The current frontend user object
-	 * @throws	SessionNotFoundException
-	 */
-	protected function getFrontendUser()
-	{
-		if ($GLOBALS ['TSFE']->fe_user) {
-			return $GLOBALS ['TSFE']->fe_user;
-		}
-		throw new SessionNotFoundException('No frontend user found in session!');
-	}
+    /**
+     * Returns the object stored in the user's PHP session
+     *
+     * @return object the stored object
+     * @throws SessionNotFoundException
+     */
+    public function restoreFromSession()
+    {
+        $sessionData = $this->getFrontendUser()->getKey('ses', self::SESSIONNAMESPACE);
+        return unserialize($sessionData);
+    }
+
+    /**
+     * Writes an object into the PHP session
+     *
+     * @param $object any serializable object to store into the session
+     * @return \SJBR\SrFreecap\Domain\Session\SessionStorage
+     * @throws SessionNotFoundException
+     */
+    public function writeToSession($object)
+    {
+        $sessionData = serialize($object);
+        $this->getFrontendUser()->setKey('ses', self::SESSIONNAMESPACE, $sessionData);
+        return $this;
+    }
+
+    /**
+     * Cleans up the session: removes the stored object from the PHP session
+     *
+     * @return \SJBR\SrFreecap\Domain\Session\SessionStorage
+     * @throws SessionNotFoundException
+     */
+    public function cleanUpSession()
+    {
+        $this->getFrontendUser()->setKey('ses', self::SESSIONNAMESPACE, null);
+        return $this;
+    }
+
+    /**
+     * Gets a frontend user from TSFE->fe_user
+     *
+     * @return \TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication    The current frontend user object
+     * @throws SessionNotFoundException
+     */
+    protected function getFrontendUser()
+    {
+        if ($GLOBALS ['TSFE']->fe_user) {
+            return $GLOBALS ['TSFE']->fe_user;
+        }
+        throw new SessionNotFoundException('No frontend user found in session!');
+    }
 }

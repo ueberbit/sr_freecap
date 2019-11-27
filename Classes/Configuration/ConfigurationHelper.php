@@ -34,30 +34,30 @@ use TYPO3\CMS\Install\ViewHelpers\Form\TypoScriptConstantsViewHelper;
  */
 class ConfigurationHelper
 {
-	/**
-	 * Renders a select element that allows to choose the encryption algoritm to be used by the extension
-	 *
-	 * @param array $params: Field information to be rendered
-	 * @param TypoScriptConstantsViewHelper $pObj: The calling parent object.
-	 * @return string The HTML select field
-	 */
-	public function buildEncryptionAlgorithmSelector(array $params, TypoScriptConstantsViewHelper $pObj)
-	{
-		if (in_array('openssl', get_loaded_extensions())) {
-			$encryptionAlgorithms = openssl_get_cipher_methods(true);
-			if (!empty($encryptionAlgorithms)) {
-				$field = '<br /><select id="' . $params['propertyName'] . '" name="' . $params['fieldName'] . '" />' . LF;
-				foreach ($encryptionAlgorithms as $encryptionAlgorithm) {
-					$selected = $params['fieldValue'] == $encryptionAlgorithm ? 'selected="selected"' : '';
-					$field .= '<option name="' . $encryptionAlgorithm . '" value="' . $encryptionAlgorithm . '" ' . $selected . '>' . $encryptionAlgorithm . '</option>' . LF;
-				}
-				$field .= '</select><br /><br />' . LF;
-			} else {
-				$field = '<br />Available encryption algorithms could not be found. Algorithm AES-256-CBC will be used.<br />';
-			}
-		} else {
-			$field = '<br />PHP openssl extension is not available.<br />';
-		}
-		return $field;
-	}
+    /**
+     * Renders a select element that allows to choose the encryption algoritm to be used by the extension
+     *
+     * @param array $params: Field information to be rendered
+     * @param TypoScriptConstantsViewHelper $pObj: The calling parent object.
+     * @return string The HTML select field
+     */
+    public function buildEncryptionAlgorithmSelector(array $params, TypoScriptConstantsViewHelper $pObj)
+    {
+        if (in_array('openssl', get_loaded_extensions())) {
+            $encryptionAlgorithms = openssl_get_cipher_methods(true);
+            if (!empty($encryptionAlgorithms)) {
+                $field = '<br /><select id="' . $params['propertyName'] . '" name="' . $params['fieldName'] . '" />' . LF;
+                foreach ($encryptionAlgorithms as $encryptionAlgorithm) {
+                    $selected = $params['fieldValue'] == $encryptionAlgorithm ? 'selected="selected"' : '';
+                    $field .= '<option name="' . $encryptionAlgorithm . '" value="' . $encryptionAlgorithm . '" ' . $selected . '>' . $encryptionAlgorithm . '</option>' . LF;
+                }
+                $field .= '</select><br /><br />' . LF;
+            } else {
+                $field = '<br />Available encryption algorithms could not be found. Algorithm AES-256-CBC will be used.<br />';
+            }
+        } else {
+            $field = '<br />PHP openssl extension is not available.<br />';
+        }
+        return $field;
+    }
 }

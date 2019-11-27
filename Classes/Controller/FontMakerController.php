@@ -34,40 +34,40 @@ use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 /**
  * Font Maker controller
  */
-class FontMakerController  extends ActionController
+class FontMakerController extends ActionController
 {
-	/**
-	 * @var string Name of the extension this controller belongs to
-	 */
-	protected $extensionName = 'SrFreecap';
+    /**
+     * @var string Name of the extension this controller belongs to
+     */
+    protected $extensionName = 'SrFreecap';
 
-	/**
-	 * Display the font maker form
-	 *
-	 * @param Font $font
-	 * @return string An HTML form for creating a new font
-	 */
-	public function newAction(Font $font = null)
-	{
-		if (!is_object($font)) {
-			$font = $this->objectManager->get(Font::class);
-		}
-		$this->view->assign('font', $font);
-	}	
+    /**
+     * Display the font maker form
+     *
+     * @param Font $font
+     * @return string An HTML form for creating a new font
+     */
+    public function newAction(Font $font = null)
+    {
+        if (!is_object($font)) {
+            $font = $this->objectManager->get(Font::class);
+        }
+        $this->view->assign('font', $font);
+    }
 
-	/**
-	 * Create the font file and display the result
-	 *
-	 * @param Font $font
-	 * @return string HTML presenting the new font that was created
-	 */
-	public function createAction(Font $font)
-	{
-		// Create the font data
-		$font->createGdFontFile();
-		// Store the GD font file
-		$fontRepository = $this->objectManager->get(FontRepository::class);
-		$fontRepository->writeFontFile($font);
-		$this->view->assign('font', $font);
-	}
+    /**
+     * Create the font file and display the result
+     *
+     * @param Font $font
+     * @return string HTML presenting the new font that was created
+     */
+    public function createAction(Font $font)
+    {
+        // Create the font data
+        $font->createGdFontFile();
+        // Store the GD font file
+        $fontRepository = $this->objectManager->get(FontRepository::class);
+        $fontRepository->writeFontFile($font);
+        $this->view->assign('font', $font);
+    }
 }

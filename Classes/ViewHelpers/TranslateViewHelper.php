@@ -1,4 +1,5 @@
 <?php
+
 namespace SJBR\SrFreecap\ViewHelpers;
 
 /*
@@ -71,82 +72,82 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
  */
 class TranslateViewHelper extends AbstractViewHelper
 {
-	/**
-	 * @var string Name of the extension this view helper belongs to
-	 */
-	protected $extensionName = 'SrFreecap';
+    /**
+     * @var string Name of the extension this view helper belongs to
+     */
+    protected $extensionName = 'SrFreecap';
 
-	/**
-	 * @var string Name of the extension this view helper belongs to
-	 */
-	protected $pluginName = 'tx_srfreecap';
+    /**
+     * @var string Name of the extension this view helper belongs to
+     */
+    protected $pluginName = 'tx_srfreecap';
 
-	/**
-	 * @var array List of allowed suffixes
-	 */
-	protected $allowedSuffixes = array('formal', 'informal');
+    /**
+     * @var array List of allowed suffixes
+     */
+    protected $allowedSuffixes = ['formal', 'informal'];
 
-	/**
-	 * @var ConfigurationManagerInterface
-	 */
-	protected $configurationManager;
+    /**
+     * @var ConfigurationManagerInterface
+     */
+    protected $configurationManager;
 
-	/**
-	 * @param ConfigurationManagerInterface $configurationManager
-	 * @return void
-	 */
-	public function injectConfigurationManager(ConfigurationManagerInterface $configurationManager)
-	{
-		$this->configurationManager = $configurationManager;
-	}
+    /**
+     * @param ConfigurationManagerInterface $configurationManager
+     */
+    public function injectConfigurationManager(ConfigurationManagerInterface $configurationManager)
+    {
+        $this->configurationManager = $configurationManager;
+    }
 
-	public function initializeArguments()
-	{
-		$this->registerArgument('key', 'string', 'The language key to translate', true);
-		$this->registerArgument('default', 'string', 'Value to be used when the key is not found');
-		$this->registerArgument('htmlEscape', 'boolean', 'Whether to escape html', false, true);
-		$this->registerArgument('arguments', 'array', 'Arguments to be replaced in the string');
-	}
+    public function initializeArguments()
+    {
+        $this->registerArgument('key', 'string', 'The language key to translate', true);
+        $this->registerArgument('default', 'string', 'Value to be used when the key is not found');
+        $this->registerArgument('htmlEscape', 'boolean', 'Whether to escape html', false, true);
+        $this->registerArgument('arguments', 'array', 'Arguments to be replaced in the string');
+    }
 
-	/**
-	 * Translate a given key or use the tag body as default.
-	 *
-	 * @param string $key The locallang key
-	 * @param string $default if the given locallang key could not be found, this value is used. . If this argument is not set, child nodes will be used to render the default
-	 * @param boolean $htmlEscape true if the result should be htmlescaped. This won't have an effect for the default value
-	 * @param array $arguments Arguments to be replaced in the resulting string
-	 * @return string The translated key or tag body if key doesn't exist
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function render($key = null)
-	{
-		if ($this->hasArgument('key')) {
-			$key = $this->arguments['key'];
-		}
-		if ($this->hasArgument('default')) {
-			$default = $this->arguments['default'];
-		}
-		if ($this->hasArgument('htmlEscape')) {
-			$htmlEscape = $this->arguments['htmlEscape'];
-		}
-		if ($this->hasArgument('arguments')) {
-			$arguments = $this->arguments['arguments'];
-		}
-		// If the suffix is allowed and we have a localized string for the desired salutation, we'll take that.
-		$settings = $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_SETTINGS, $this->extensionName, $this->pluginName);
-		if (isset($settings['salutation']) && in_array($settings['salutation'], $this->allowedSuffixes, 1)) {
-			$expandedKey = $key . '_' . $settings['salutation'];
-			$value = LocalizationUtility::translate($expandedKey, $this->extensionName, $arguments);
-		}
-		if ($value === null) {
-			$value = LocalizationUtility::translate($key, $this->extensionName, $arguments);
-		}
-		if ($value === null) {
-			$value = $default !== null ? $default : $this->renderChildren();
-		} elseif ($htmlEscape) {
-			$value = htmlspecialchars($value);
-		}
-		return $value;
-	}
+    /**
+     * Translate a given key or use the tag body as default.
+     *
+     * @param string $key The locallang key
+     * @return string The translated key or tag body if key doesn't exist
+     * @author Christopher Hlubek <hlubek@networkteam.com>
+     * @author Bastian Waidelich <bastian@typo3.org>
+     */
+    public function render($key = null)
+    {
+        if ($this->hasArgument('key')) {
+            $key = $this->arguments['key'];
+        }
+        if ($this->hasArgument('default')) {
+            $default = $this->arguments['default'];
+        }
+        if ($this->hasArgument('htmlEscape')) {
+            $htmlEscape = $this->arguments['htmlEscape'];
+        }
+        if ($this->hasArgument('arguments')) {
+            $arguments = $this->arguments['arguments'];
+        }
+        // If the suffix is allowed and we have a localized string for the desired salutation, we'll take that.
+        $settings = $this->configurationManager->getConfiguration(
+            ConfigurationManagerInterface::CONFIGURATION_TYPE_SETTINGS,
+            $this->extensionName,
+            $this->pluginName
+        );
+        if (isset($settings['salutation']) && in_array($settings['salutation'], $this->allowedSuffixes, 1)) {
+            $expandedKey = $key . '_' . $settings['salutation'];
+            $value = LocalizationUtility::translate($expandedKey, $this->extensionName, $arguments);
+        }
+        if ($value === null) {
+            $value = LocalizationUtility::translate($key, $this->extensionName, $arguments);
+        }
+        if ($value === null) {
+            $value = $default !== null ? $default : $this->renderChildren();
+        } elseif ($htmlEscape) {
+            $value = htmlspecialchars($value);
+        }
+        return $value;
+    }
 }

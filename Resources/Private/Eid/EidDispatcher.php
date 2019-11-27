@@ -28,7 +28,7 @@
  */
 // Exit, if script is called directly
 if (!defined('TYPO3_MODE') || TYPO3_MODE !== 'FE') {
-	die('Could not access this script directly!');
+    die('Could not access this script directly!');
 }
 // Setting privacy policy header for IE in popup window
 header('P3P:CP="IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT"');
